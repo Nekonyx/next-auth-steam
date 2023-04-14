@@ -1,6 +1,8 @@
+import { randomUUID } from 'crypto'
 import { NextApiRequest } from 'next'
 import { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 import { RelyingParty } from 'openid'
+import { TokenSet } from 'openid-client'
 
 import { PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
 
@@ -81,9 +83,11 @@ export function Steam(
         }
 
         return {
-          tokens: {
-            steamId: matches[1]
-          }
+          tokens: new TokenSet({
+            id_token: randomUUID(),
+            access_token: randomUUID(),
+            steamid: matches[1]
+          })
         }
       }
     },
