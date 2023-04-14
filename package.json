@@ -1,0 +1,27 @@
+{
+  "name": "next-auth-steam",
+  "license": "WTFPL",
+  "version": "0.0.4",
+  "description": "Steam authentication provider for next-auth",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "peerDependencies": {
+    "next": "^13.3.0",
+    "next-auth": "^4.22.0"
+  },
+  "dependencies": {
+    "openid": "^2.0.10"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/openid": "^2.0.2",
+    "typescript": "^5.0.4"
+  }
+}
