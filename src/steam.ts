@@ -86,7 +86,7 @@ export function Steam(
           tokens: new TokenSet({
             id_token: randomUUID(),
             access_token: randomUUID(),
-            steamid: matches[1]
+            steamId: matches[1]
           })
         }
       }
