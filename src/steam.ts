@@ -6,7 +6,6 @@ import { PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
 
 // prettier-ignore
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
-  req: NextApiRequest
   /** Steam WebAPI Key */
   secretKey: string
   /** @example 'https://example.com/api/auth/callback' */
@@ -14,6 +13,7 @@ export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfi
 }
 
 export function Steam(
+  req: NextApiRequest,
   options: SteamProviderOptions
 ): OAuthConfig<SteamProfile> {
   const callbackUrl = new URL(options.callbackUrl)
@@ -60,7 +60,7 @@ export function Steam(
           authenticated: boolean
           claimedIdentifier?: string | undefined
         } = await new Promise((resolve, reject) => {
-          openid.verifyAssertion(options.req, (error, result) => {
+          openid.verifyAssertion(req, (error, result) => {
             if (error) {
               reject(error)
             } else {
