@@ -6,8 +6,6 @@ import { PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
 
 // prettier-ignore
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
-  /** Steam WebAPI Key */
-  secretKey: string
   /** @example 'https://example.com/api/auth/callback' */
   callbackUrl: string | URL
 }
@@ -41,7 +39,6 @@ export function Steam(
     idToken: false,
     checks: ['none'],
     clientId: PROVIDER_ID,
-    clientSecret: PROVIDER_ID,
     authorization: {
       url: 'https://steamcommunity.com/openid/login',
       params: {
@@ -93,7 +90,7 @@ export function Steam(
     userinfo: {
       async request(ctx) {
         const response = await fetch(
-          `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${options.secretKey}&steamids=${ctx.tokens.steamId}`
+          `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${ctx.provider.clientSecret}&steamids=${ctx.tokens.steamId}`
         )
 
         const data = await response.json()
