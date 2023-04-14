@@ -40,6 +40,8 @@ export function Steam(
     },
     idToken: false,
     checks: ['none'],
+    clientId: PROVIDER_ID,
+    clientSecret: PROVIDER_ID,
     authorization: {
       url: 'https://steamcommunity.com/openid/login',
       params: {
