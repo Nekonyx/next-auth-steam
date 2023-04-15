@@ -11,7 +11,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth from 'next-auth'
 import SteamProvider from 'next-auth-steam'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return NextAuth(req, res, {
     providers: [
       SteamProvider(req, {
@@ -28,6 +28,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks
 
 ```ts
+import { PROVIDER_ID } from 'next-auth-steam'
+
+// ...
+
 return NextAuth(req, res, {
   providers: [
     SteamProvider(...)
