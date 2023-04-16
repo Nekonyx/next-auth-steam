@@ -9,7 +9,7 @@
   "dependencies": {
     "next": "^13.3.0",
     "next-auth": "^4.22.0",
-    "next-auth-steam": "file:../",
+    "next-auth-steam": "file:../../",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -5,6 +5,7 @@ import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 
 import { PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
+import { NextRequest } from 'next/server'
 
 // prettier-ignore
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
@@ -13,11 +14,11 @@ export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfi
 }
 
 export function Steam(
-  req: NextApiRequest,
+  req: NextApiRequest | NextRequest,
   options: SteamProviderOptions
 ): OAuthConfig<SteamProfile> {
   const callbackUrl = new URL(options.callbackUrl)
-
+  
   // https://example.com
   // https://example.com/api/auth/callback/steam
   const realm = callbackUrl.origin
@@ -104,7 +105,7 @@ export function Steam(
  * Verifies an assertion and returns the claimed identifier if authenticated, otherwise null.
  */
 async function verifyAssertion(
-  req: NextApiRequest,
+  req: NextApiRequest | NextRequest,
   realm: string,
   returnTo: string
 ): Promise<string | null> {
@@ -114,7 +115,8 @@ async function verifyAssertion(
     authenticated: boolean
     claimedIdentifier?: string | undefined
   } = await new Promise((resolve, reject) => {
-    party.verifyAssertion(req, (error, result) => {
+    const reqOrUrl = req instanceof Request ? req.url : req;
+    party.verifyAssertion(reqOrUrl, (error, result) => {
       if (error) {
         reject(error)
       } else {
