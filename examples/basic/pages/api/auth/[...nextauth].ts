@@ -1,14 +1,13 @@
 import SteamProvider from 'next-auth-steam'
 import NextAuth from 'next-auth/next'
 
-import type { NextRequest } from 'next/server'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-async function handler(
-  req: NextRequest,
-  ctx: { params: { nextauth: string[] } }
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
 ) {
-  // @ts-expect-error
-  return NextAuth(req, ctx, {
+  return NextAuth(req, res, {
     providers: [
       SteamProvider(req, {
         clientSecret: process.env.STEAM_SECRET!,
@@ -16,9 +15,4 @@ async function handler(
       })
     ]
   })
-}
-
-export {
-	handler as GET,
-	handler as POST
 }

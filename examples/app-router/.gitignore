@@ -1,6 +1,7 @@
-node_modules/
-.next/
-.env
+/node_modules/
+/.next/
+/.env
+
 *.local
 .vscode
 .vercel

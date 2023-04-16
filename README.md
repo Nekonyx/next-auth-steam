@@ -1,8 +1,10 @@
-## next-auth-steam
+# next-auth-steam
 
 steam authentication provider for [next-auth](https://npm.im/next-auth).
 
-### Usage:
+## Example
+
+### Basic usage
 
 ```ts
 // pages/api/auth/[...nextauth].ts
@@ -22,6 +24,37 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   })
 }
 ```
+
+### App directory usage
+
+```ts
+// app/api/auth/[...nextauth]/route.ts
+async function handler(
+  req: NextRequest,
+  ctx: {
+    params: {
+      nextauth: string[]
+    }
+  }
+) {
+  // @ts-ignore
+  return NextAuth(req, ctx, {
+    providers: [
+      SteamProvider(req, {
+        clientSecret: process.env.STEAM_SECRET!,
+        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      })
+    ]
+  })
+}
+
+export {
+  handler as GET,
+  handler as POST
+}
+```
+
+### Retrieve Steam user information
 
 To obtain all data of Steam user, use these two callbacks to retrieve user's information:
 
@@ -56,26 +89,4 @@ return NextAuth(req, res, {
 })
 ```
 
-### App Router usage:
-```ts
-// app/api/auth/[...nextauth]/route.ts
-async function handler(
-	req: NextRequest,
-	ctx: { params: { nextauth: string[] } }
-) {
-	//@ts-ignore
-	return NextAuth(req, ctx, {
-		providers: [
-			SteamProvider(req, {
-				clientSecret: process.env.STEAM_SECRET!,
-				callbackUrl: 'http://localhost:3000/api/auth/callback',
-			}),
-		],
-        ...//callbacks
-	});
-}
-
-export { handler as GET, handler as POST };
-
-```
-### full demo see [examples](examples)
+Other examples are in [examples](examples) folder.

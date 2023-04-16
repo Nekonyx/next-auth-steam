@@ -1,11 +1,12 @@
 import { randomUUID } from 'crypto'
-import { NextApiRequest } from 'next'
-import { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 
 import { PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
-import { NextRequest } from 'next/server'
+
+import type { NextApiRequest } from 'next'
+import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
+import type { NextRequest } from 'next/server'
 
 // prettier-ignore
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
@@ -18,7 +19,7 @@ export function Steam(
   options: SteamProviderOptions
 ): OAuthConfig<SteamProfile> {
   const callbackUrl = new URL(options.callbackUrl)
-  
+
   // https://example.com
   // https://example.com/api/auth/callback/steam
   const realm = callbackUrl.origin
@@ -57,7 +58,8 @@ export function Steam(
     token: {
       async request() {
         // May throw an error, dunno should I handle it or no
-        const claimedIdentifier = await verifyAssertion(req, realm, returnTo)
+        // prettier-ignore
+        const claimedIdentifier = await verifyAssertion(req.url!, realm, returnTo)
 
         if (!claimedIdentifier) {
           throw new Error('Unauthenticated')
@@ -105,7 +107,7 @@ export function Steam(
  * Verifies an assertion and returns the claimed identifier if authenticated, otherwise null.
  */
 async function verifyAssertion(
-  req: NextApiRequest | NextRequest,
+  url: string,
   realm: string,
   returnTo: string
 ): Promise<string | null> {
@@ -115,8 +117,7 @@ async function verifyAssertion(
     authenticated: boolean
     claimedIdentifier?: string | undefined
   } = await new Promise((resolve, reject) => {
-    const reqOrUrl = req instanceof Request ? req.url : req;
-    party.verifyAssertion(reqOrUrl, (error, result) => {
+    party.verifyAssertion(url, (error, result) => {
       if (error) {
         reject(error)
       } else {
