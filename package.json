@@ -7,7 +7,7 @@
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Nekonyx/nebull"
+    "url": "https://github.com/Nekonyx/next-auth-steam"
   },
   "files": [
     "lib"
