@@ -55,26 +55,14 @@ export function Steam(
     },
     token: {
       async request() {
-        const openid = new RelyingParty(returnTo, realm, true, false, [])
+        // May throw an error, dunno should I handle it or no
+        const claimedIdentifier = await verifyAssertion(req, realm, returnTo)
 
-        const result: {
-          authenticated: boolean
-          claimedIdentifier?: string | undefined
-        } = await new Promise((resolve, reject) => {
-          openid.verifyAssertion(req, (error, result) => {
-            if (error) {
-              reject(error)
-            } else {
-              resolve(result!)
-            }
-          })
-        })
-
-        if (!result.authenticated) {
+        if (!claimedIdentifier) {
           throw new Error('Unauthenticated')
         }
 
-        const matches = result.claimedIdentifier?.match(
+        const matches = claimedIdentifier.match(
           /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/
         )
 
@@ -110,4 +98,34 @@ export function Steam(
       }
     }
   }
+}
+
+/**
+ * Verifies an assertion and returns the claimed identifier if authenticated, otherwise null.
+ */
+async function verifyAssertion(
+  req: NextApiRequest,
+  realm: string,
+  returnTo: string
+): Promise<string | null> {
+  const party = new RelyingParty(returnTo, realm, true, false, [])
+
+  const result: {
+    authenticated: boolean
+    claimedIdentifier?: string | undefined
+  } = await new Promise((resolve, reject) => {
+    party.verifyAssertion(req, (error, result) => {
+      if (error) {
+        reject(error)
+      } else {
+        resolve(result!)
+      }
+    })
+  })
+
+  if (!result.authenticated) {
+    return null
+  }
+
+  return result.claimedIdentifier!
 }
