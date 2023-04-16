@@ -23,7 +23,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 ```
 
-#### To obtain all the data of a Steam user, use these two callbacks to retrieve the user's information
+To obtain all data of Steam user, use these two callbacks to retrieve user's information:
 
 https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks
 
@@ -34,7 +34,7 @@ import { PROVIDER_ID } from 'next-auth-steam'
 
 return NextAuth(req, res, {
   providers: [
-    SteamProvider(...)
+    SteamProvider( ... )
   ],
   callbacks: {
     jwt({ token, account, profile }) {
