@@ -2,7 +2,12 @@ import { randomUUID } from 'crypto'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 
-import { PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
+import {
+  EMAIL_DOMAIN,
+  PROVIDER_ID,
+  PROVIDER_NAME,
+  SteamProfile
+} from './constants'
 
 import type { NextApiRequest } from 'next'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
@@ -94,9 +99,11 @@ export function Steam(
       }
     },
     profile(profile: SteamProfile) {
+      // next.js can't serialize the session if email is missing or null, so I specify user ID
       return {
         id: profile.steamid,
         image: profile.avatarfull,
+        email: `${profile.steamid}@${EMAIL_DOMAIN}`,
         name: profile.personaname
       }
     }
