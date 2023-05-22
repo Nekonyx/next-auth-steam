@@ -57,15 +57,6 @@ export default function Steam<P extends SteamProfile>(
     id: "steam",
     name: "Steam",
     type: "oauth",
-    style: {
-      logo: "https://raw.githubusercontent.com/nekonyx/next-auth-steam/master/logo/steam.svg",
-      logoDark:
-        "https://raw.githubusercontent.com/nekonyx/next-auth-steam/master/logo/steam-dark.svg",
-      bg: "#000",
-      text: "#fff",
-      bgDark: "#000",
-      textDark: "#fff",
-    },
     idToken: false,
     checks: ["none"],
     clientId: "steam",
@@ -131,6 +122,15 @@ export default function Steam<P extends SteamProfile>(
         email: `${profile.steamid}@steamcommunity.com`,
         name: profile.personaname,
       };
+    },
+    style: {
+      logo: "https://raw.githubusercontent.com/nekonyx/next-auth-steam/master/logo/steam.svg",
+      logoDark:
+        "https://raw.githubusercontent.com/nekonyx/next-auth-steam/master/logo/steam-dark.svg",
+      bg: "#fff",
+      text: "#171a21",
+      bgDark: "#171a21",
+      textDark: "#fff",
     },
     options: rest,
   };
