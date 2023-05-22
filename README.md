@@ -5,6 +5,8 @@ Steam authentication provider for [next-auth](https://npm.im/next-auth).
 - [App Router](#app-directory-usage)
 - [Pages Router](#basic-usage)
 
+Check other examples in [examples](examples) folder.
+
 ### App Router usage
 
 ```ts
@@ -42,9 +44,9 @@ const handler = (req: NextApiRequest, ctx: NextApiResponse) =>
   NextAuth(req, ctx, {
     providers: [
       SteamProvider(req, {
+        clientId: "steam",
         clientSecret: process.env.STEAM_API_KEY!,
         callbackUrl: "http://localhost:3000/api/auth/callback",
-        clientId: "steam",
       }),
     ],
   });
