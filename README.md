@@ -2,8 +2,8 @@
 Steam authentication provider for [next-auth](https://npm.im/next-auth).
 
 ## Example
-- [App Router](#app-directory-usage)
-- [Pages Router](#basic-usage)
+- [App Router](#app-router-usage)
+- [Pages Router](#pages-router-usage)
 
 Check other examples in [examples](examples) folder.
 
