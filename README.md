@@ -1,57 +1,55 @@
-# next-auth-steam
-
-steam authentication provider for [next-auth](https://npm.im/next-auth).
+# Steam provider for NextAuth.JS
+Steam authentication provider for [next-auth](https://npm.im/next-auth).
 
 ## Example
+- [App Router](#app-directory-usage)
+- [Pages Router](#basic-usage)
 
-### Basic usage
-
-```ts
-// pages/api/auth/[...nextauth].ts
-import { NextApiRequest, NextApiResponse } from 'next'
-
-import NextAuth from 'next-auth'
-import SteamProvider from 'next-auth-steam'
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return NextAuth(req, res, {
-    providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
-      })
-    ]
-  })
-}
-```
-
-### App directory usage
+### App Router usage
 
 ```ts
 // app/api/auth/[...nextauth]/route.ts
-async function handler(
-  req: NextRequest,
-  ctx: {
-    params: {
-      nextauth: string[]
-    }
-  }
-) {
-  // @ts-ignore
-  return NextAuth(req, ctx, {
+import NextAuth from "next-auth";
+
+import type { NextApiRequest, NextApiResponse } from "next";
+import SteamProvider from "next-auth-steam";
+
+const handler = (req: NextApiRequest, ctx: NextApiResponse) =>
+  NextAuth(req, ctx, {
     providers: [
       SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
-      })
-    ]
-  })
-}
+        clientId: "steam",
+        clientSecret: process.env.STEAM_API_KEY!,
+        callbackUrl: "http://localhost:3000/api/auth/callback",
+      }),
+    ],
+  });
 
-export {
-  handler as GET,
-  handler as POST
-}
+export { handler as GET, handler as POST };
+```
+
+### Pages Router usage
+
+```ts
+// pages/api/auth/[...nextauth].ts
+import NextAuth from "next-auth";
+
+import type { NextApiRequest, NextApiResponse } from "next";
+import SteamProvider from "next-auth-steam";
+
+// @see ./lib/auth
+const handler = (req: NextApiRequest, ctx: NextApiResponse) =>
+  NextAuth(req, ctx, {
+    providers: [
+      SteamProvider(req, {
+        clientSecret: process.env.STEAM_API_KEY!,
+        callbackUrl: "http://localhost:3000/api/auth/callback",
+        clientId: "steam",
+      }),
+    ],
+  });
+
+export default handler;
 ```
 
 ### Retrieve Steam user information
@@ -61,17 +59,14 @@ To obtain all data of Steam user, use these two callbacks to retrieve user's inf
 https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks
 
 ```ts
-import { PROVIDER_ID } from 'next-auth-steam'
-
 // ...
-
 return NextAuth(req, res, {
   providers: [
     SteamProvider( ... )
   ],
   callbacks: {
     jwt({ token, account, profile }) {
-      if (account?.provider === PROVIDER_ID) {
+      if (account?.provider === "steam") {
         token.steam = profile
       }
 
@@ -88,5 +83,3 @@ return NextAuth(req, res, {
   }
 })
 ```
-
-Other examples are in [examples](examples) folder.
