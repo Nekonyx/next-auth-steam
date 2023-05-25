@@ -6,32 +6,32 @@ import {AuthOptions} from "next-auth";
 import {NextApiRequest, NextApiResponse} from "next";
 import {NextResponse} from "next/server";
 
-export function getAuthOptions(req: NextApiRequest): AuthOptions {
+export function getAuthOptions(req?: NextApiRequest): AuthOptions {
     return {
-        providers: [
-            SteamProvider(req, {
-                clientSecret: process.env.STEAM_SECRET!,
-                callbackUrl: 'http://localhost:3000/api/auth/callback'
-            })
-        ],
+        providers: req
+            ? [
+                SteamProvider(req, {
+                    clientSecret: process.env.STEAM_SECRET!,
+                    callbackUrl: 'http://localhost:3000/api/auth/callback',
+                }),
+            ]
+            : [],
         callbacks: {
             jwt({ token, account, profile }) {
                 if (account?.provider === PROVIDER_ID) {
-                    token.steam = profile
+                    token.steam = profile;
                 }
-
-                return token
+                return token;
             },
             session({ session, token }) {
                 if ('steam' in token) {
                     // @ts-expect-error
-                    session.user.steam = token.steam
+                    session.user.steam = token.steam;
                 }
-
-                return session
-            }
-        }
-    }
+                return session;
+            },
+        },
+    };
 }
 
 async function handler(
