@@ -3,10 +3,8 @@ import NextAuth from 'next-auth/next'
 
 import type { NextRequest } from 'next/server'
 import {AuthOptions} from "next-auth";
-import {NextApiRequest, NextApiResponse} from "next";
-import {NextResponse} from "next/server";
 
-export function getAuthOptions(req?: NextApiRequest): AuthOptions {
+export function getAuthOptions(req: NextRequest): AuthOptions {
     return {
         providers: req
             ? [
@@ -36,7 +34,7 @@ export function getAuthOptions(req?: NextApiRequest): AuthOptions {
 
 async function handler(
     req: NextRequest,
-    res: NextResponse
+    ctx: { params: { nextauth: string[] }}
 ) {
     // @ts-expect-error
     return NextAuth(req, res, getAuthOptions(req));
