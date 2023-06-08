@@ -40,8 +40,8 @@ export function Steam(
       logo: 'https://raw.githubusercontent.com/nekonyx/next-auth-steam/master/logo/steam.svg',
       logoDark:
         'https://raw.githubusercontent.com/nekonyx/next-auth-steam/master/logo/steam-dark.svg',
-      bg: '#000',
-      text: '#fff',
+      bg: '#fff',
+      text: '#000',
       bgDark: '#000',
       textDark: '#fff'
     },
