@@ -1,7 +1,7 @@
 {
   "name": "next-auth-steam",
   "license": "WTFPL",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Steam authentication provider for next-auth",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
