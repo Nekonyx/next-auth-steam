@@ -16,7 +16,8 @@ import type { NextRequest } from 'next/server'
 // prettier-ignore
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
   /** @example 'https://example.com/api/auth/callback' */
-  callbackUrl: string | URL
+  callbackUrl: string | URL;
+  clientSecret: string;
 }
 
 export function Steam(
