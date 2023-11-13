@@ -1,35 +1,29 @@
 import { randomUUID } from 'crypto'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
-
 import {
   EMAIL_DOMAIN,
   PROVIDER_ID,
   PROVIDER_NAME,
   SteamProfile
 } from './constants'
-
-import type { NextApiRequest } from 'next'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
-import type { NextRequest } from 'next/server'
 
 // prettier-ignore
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
-  /** @example 'https://example.com/api/auth/callback' */
-  callbackUrl: string | URL;
   clientSecret: string;
 }
 
 export function Steam(
-  req: NextApiRequest | NextRequest,
   options: SteamProviderOptions
 ): OAuthConfig<SteamProfile> {
-  const callbackUrl = new URL(options.callbackUrl)
+  const callbackUrl = new URL(process.env.NEXTAUTH_URL || '')
 
   // https://example.com
   // https://example.com/api/auth/callback/steam
   const realm = callbackUrl.origin
   const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`
+  const path = callbackUrl.pathname + callbackUrl.search; // This should give you the path and query string, similar to `req.url`.
 
   return {
     // @ts-expect-error
@@ -64,8 +58,7 @@ export function Steam(
     token: {
       async request() {
         // May throw an error, dunno should I handle it or no
-        // prettier-ignore
-        const claimedIdentifier = await verifyAssertion(req.url!, realm, returnTo)
+        const claimedIdentifier = await verifyAssertion(path, realm, returnTo)
 
         if (!claimedIdentifier) {
           throw new Error('Unauthenticated')
