@@ -17,7 +17,7 @@
     "esModuleInterop": true,
     "declarationMap": true,
     "baseUrl": ".",
-    "outDir": "lib",
+    "outDir": "dist",
     "typeRoots": ["node_modules/@types", "src/constants.ts"]
   },
   "include": ["src"]

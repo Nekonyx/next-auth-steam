@@ -3,15 +3,15 @@
   "license": "WTFPL",
   "version": "0.1.0",
   "description": "Steam authentication provider for next-auth",
-  "main": "lib/index.js",
-  "module": "lib/index.es.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/red-game-dev/next-auth-steam"
   },
   "files": [
-    "lib"
+    "dist"
   ],
   "scripts": {
     "build": "tsc",
