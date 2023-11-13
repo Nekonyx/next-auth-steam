@@ -9,9 +9,8 @@ export default async function handler(
 ) {
   return NextAuth(req, res, {
     providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      SteamProvider({
+        clientSecret: process.env.STEAM_SECRET!
       })
     ]
   })

@@ -10,9 +10,8 @@ async function handler(
   // @ts-expect-error
   return NextAuth(req, ctx, {
     providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      SteamProvider({
+        clientSecret: process.env.STEAM_SECRET!
       })
     ]
   })

@@ -8,9 +8,8 @@ export function getAuthOptions(req: NextRequest): AuthOptions {
     return {
         providers: req
             ? [
-                SteamProvider(req, {
-                    clientSecret: process.env.STEAM_SECRET!,
-                    callbackUrl: 'http://localhost:3000/api/auth/callback',
+                SteamProvider({
+                    clientSecret: process.env.STEAM_SECRET!
                 }),
             ]
             : [],

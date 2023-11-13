@@ -16,9 +16,8 @@ import SteamProvider from 'next-auth-steam'
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return NextAuth(req, res, {
     providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      SteamProvider({
+        clientSecret: process.env.STEAM_SECRET!
       })
     ]
   })
@@ -40,9 +39,8 @@ async function handler(
   // @ts-ignore
   return NextAuth(req, ctx, {
     providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      SteamProvider({
+        clientSecret: process.env.STEAM_SECRET!
       })
     ]
   })

@@ -1,6 +1,6 @@
 import { AuthOptions } from 'next-auth'
 import NextAuth from 'next-auth/next'
-import SteamProvider, { PROVIDER_ID } from 'next-auth-steam'
+import SteamProvider from 'next-auth-steam'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -13,16 +13,15 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  return NextAuth(req, res, getAuthOptions(req))
+  return NextAuth(req, res, getAuthOptions())
 }
 
-export function getAuthOptions(req: NextRequest): AuthOptions {
+export function getAuthOptions(): AuthOptions {
   return {
     adapter: PrismaAdapter(prisma),
     providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: `${process.env.BASE_FETCH_URL}/api/auth/callback`,
+      SteamProvider({
+        clientSecret: process.env.STEAM_SECRET!
       }),
     ],
     callbacks: {
