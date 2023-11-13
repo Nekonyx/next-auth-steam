@@ -1,15 +1,22 @@
-# next-auth-steam
+# Next-auth-steam
 
-steam authentication provider for [next-auth](https://npm.im/next-auth).
+Your Next.js app with seamless Steam authentication! 🎉
 
-## Example
+This is a streamlined and improved version of the Steam authentication provider for [next-auth](https://npm.im/next-auth)! 🎮 This package is a fork of [Nekonyx/next-auth-steam](https://github.com/Nekonyx/next-auth-steam), designed to optimize your authentication flow and eliminate unnecessary overhead. Say goodbye to the mandatory `request` parameter and the frequent need for `getServersideProps`—this implementation is all about efficiency and developer happiness! 😄
 
-### Basic usage
+## 🌟 What's New?
+
+- ✨ No more need for `request` as a required parameter! 
+- 🛠️ Simplified implementation for `getServerSession`.
+- 🔥 Examples and usage patterns to get you started in no time!
+
+## 🔍 Example Usage
+
+### 🔹 Basic Authentication Setup
 
 ```ts
 // pages/api/auth/[...nextauth].ts
 import { NextApiRequest, NextApiResponse } from 'next'
-
 import NextAuth from 'next-auth'
 import SteamProvider from 'next-auth-steam'
 
@@ -24,7 +31,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 ```
 
-### App directory usage
+### 🔹 App Directory Integration
 
 ```ts
 // app/api/auth/[...nextauth]/route.ts
@@ -49,11 +56,9 @@ async function handler(
 export { handler as GET, handler as POST }
 ```
 
-### Retrieve Steam user information
+### 🔹 Fetching Steam User Data
 
-To obtain all data of Steam user, use these two callbacks to retrieve user's information:
-
-https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks
+To capture the full essence of a Steam user's profile, follow the pattern below:
 
 ```ts
 import { PROVIDER_ID } from 'next-auth-steam'
@@ -74,7 +79,7 @@ return NextAuth(req, res, {
     },
     session({ session, token }) {
       if ('steam' in token) {
-        // @ts-expect-error
+        // Pass a generic type in ts, so you can have your custom session
         session.user.steam = token.steam
       }
 
@@ -84,4 +89,4 @@ return NextAuth(req, res, {
 })
 ```
 
-Other examples are in [examples](examples) folder.
+Dive into more examples in the [examples](examples) folder and get your Steam integration up and running like a charm! 🌈
