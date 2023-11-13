@@ -9,8 +9,7 @@ import {
 } from './constants'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 
-// prettier-ignore
-export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
+export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
   clientSecret: string;
 }
 
@@ -23,10 +22,9 @@ export function Steam(
   // https://example.com/api/auth/callback/steam
   const realm = callbackUrl.origin
   const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`
-  const path = callbackUrl.pathname + callbackUrl.search; // This should give you the path and query string, similar to `req.url`.
+  const path = callbackUrl.pathname + callbackUrl.search // This should give you the path and query string, similar to `req.url`.
 
   return {
-    // @ts-expect-error
     options,
     id: PROVIDER_ID,
     name: PROVIDER_NAME,
@@ -133,3 +131,8 @@ async function verifyAssertion(
 
   return result.claimedIdentifier!
 }
+
+Steam({
+  clientId: 'test',
+  clientSecret: 'test'
+})

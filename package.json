@@ -4,32 +4,52 @@
   "version": "0.1.5",
   "description": "Steam authentication provider for next-auth",
   "main": "lib/index.js",
+  "module": "lib/index.es.js",
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Nekonyx/next-auth-steam"
+    "url": "https://github.com/red-game-dev/next-auth-steam"
   },
   "files": [
     "lib"
   ],
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "lint": "eslint --ext .js,.jsx,.ts,.json,.mdx ./src",
+    "lint:fix": "eslint --fix -c .eslintrc.cjs --ext ts ./src",
+    "prepack": "json -f package.json -I -e \"delete this.devDependencies; delete this.dependencies\"",
+    "prettier:fix": "prettier --write .",
+    "prettier": "prettier --check ."
   },
   "peerDependencies": {
     "next": "^13.3.4",
     "next-auth": "^4.22.1",
     "openid-client": "^5.4.2"
   },
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js"
+    }
+  },
   "dependencies": {
-    "openid": "^2.0.10"
+    "openid": "^2.0.8"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.49.0",
+    "@typescript-eslint/parser": "^5.49.0",
+    "@babel/core": "^7.20.12",
     "@types/node": "^18.16.3",
     "@types/openid": "^2.0.2",
+    "babel-loader": "^8.3.0",
+    "eslint": "^8.33.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.2.1",
     "next": "^13.3.4",
     "next-auth": "^4.22.1",
     "openid-client": "^5.4.2",
-    "typescript": "^5.0.4"
+    "prettier": "^2.8.3",
+    "typescript": "^4.9.3"
   }
 }

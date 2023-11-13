@@ -17,7 +17,7 @@ export enum PersonaState {
   LookingToPlay = 6
 }
 
-export interface SteamProfile extends Record<string, any> {
+export interface SteamProfile extends Record<string, string | number | boolean | CommunityVisibilityState | PersonaState> {
   steamid: string
   communityvisibilitystate: CommunityVisibilityState
   profilestate: number

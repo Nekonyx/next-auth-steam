@@ -46,10 +46,7 @@ async function handler(
   })
 }
 
-export {
-  handler as GET,
-  handler as POST
-}
+export { handler as GET, handler as POST }
 ```
 
 ### Retrieve Steam user information

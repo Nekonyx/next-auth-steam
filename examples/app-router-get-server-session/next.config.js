@@ -1,5 +1,4 @@
 /** @type {import('next').NextConfig} */
-const config = {
-}
+const config = {}
 
 module.exports = config
