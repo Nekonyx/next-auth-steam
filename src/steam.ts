@@ -72,8 +72,8 @@ export function Steam(
 
         return {
           tokens: new TokenSet({
-            id_token: uuidv5(),
-            access_token: uuidv5(),
+            id_token: uuidv5(returnTo, uuidv5.URL),
+            access_token: uuidv5(returnTo, uuidv5.URL),
             steamId: matches[1]
           })
         }
