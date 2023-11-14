@@ -10,7 +10,8 @@ export default async function handler(
   return NextAuth(req, res, {
     providers: [
       SteamProvider({
-        clientSecret: process.env.STEAM_SECRET!
+        clientSecret: process.env.STEAM_SECRET!,
+        nextAuthUrl: process.env.NEXTAUTH_URL!
       })
     ]
   })

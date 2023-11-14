@@ -27,3 +27,4 @@ storybook-static
 .vercel
 
 .env
+vite-env.d.ts

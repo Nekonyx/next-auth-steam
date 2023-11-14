@@ -9,7 +9,8 @@ export function getAuthOptions(req: NextRequest): AuthOptions {
     providers: req
       ? [
           SteamProvider({
-            clientSecret: process.env.STEAM_SECRET!
+            clientSecret: process.env.STEAM_SECRET!,
+            nextAuthUrl: process.env.NEXTAUTH_URL!
           })
         ]
       : [],

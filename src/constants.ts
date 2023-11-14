@@ -38,3 +38,8 @@ export interface SteamProfile
   personastateflags: number
   commentpermission: boolean
 }
+
+export type VerifyAssertionResult = {
+  authenticated: boolean;
+  claimedIdentifier?: string | undefined;
+}

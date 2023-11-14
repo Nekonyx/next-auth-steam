@@ -1,4 +1,4 @@
-# Next-auth-steam
+# @hyperplay/next-auth-steam
 
 Your Next.js app with seamless Steam authentication! 🎉
 
@@ -10,6 +10,20 @@ This is a streamlined and improved version of the Steam authentication provider 
 - 🛠️ Simplified implementation for `getServerSession`.
 - 🔥 Examples and usage patterns to get you started in no time!
 
+## 📦 Install 
+
+```bash
+npm install @hyperplay/next-auth-steam
+```
+
+```bash
+yarn add @hyperplay/next-auth-steam
+```
+
+```bash
+pnpm install @hyperplay/next-auth-steam
+```
+
 ## 🔍 Example Usage
 
 ### 🔹 Basic Authentication Setup
@@ -18,13 +32,35 @@ This is a streamlined and improved version of the Steam authentication provider 
 // pages/api/auth/[...nextauth].ts
 import { NextApiRequest, NextApiResponse } from 'next'
 import NextAuth from 'next-auth'
-import SteamProvider from 'next-auth-steam'
+import SteamProvider from '@hyperplay/next-auth-steam'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return NextAuth(req, res, {
     providers: [
       SteamProvider({
         clientSecret: process.env.STEAM_SECRET!
+        nextAuthUrl: process.env.NEXTAUTH_URL!
+      })
+    ]
+  })
+}
+```
+
+### 🔹 Custom Provider Id
+
+```ts
+// pages/api/auth/[...nextauth].ts
+import { NextApiRequest, NextApiResponse } from 'next'
+import NextAuth from 'next-auth'
+import SteamProvider from '@hyperplay/next-auth-steam'
+
+export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  return NextAuth(req, res, {
+    providers: [
+      SteamProvider({
+        clientId: process.env.STEAM_ID!
+        clientSecret: process.env.STEAM_SECRET!
+        nextAuthUrl: process.env.NEXTAUTH_URL!
       })
     ]
   })
@@ -48,6 +84,7 @@ async function handler(
     providers: [
       SteamProvider({
         clientSecret: process.env.STEAM_SECRET!
+        nextAuthUrl: process.env.NEXTAUTH_URL!
       })
     ]
   })
@@ -61,7 +98,7 @@ export { handler as GET, handler as POST }
 To capture the full essence of a Steam user's profile, follow the pattern below:
 
 ```ts
-import { PROVIDER_ID } from 'next-auth-steam'
+import { PROVIDER_ID } from '@hyperplay/next-auth-steam'
 
 // ...
 

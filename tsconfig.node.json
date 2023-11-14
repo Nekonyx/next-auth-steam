@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
+    "strict": true,
+    "target": "ESNext",
     "composite": true,
-    "module": "ESNext",
+    "module": "commonjs",
+    "forceConsistentCasingInFileNames":true,
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true

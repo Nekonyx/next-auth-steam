@@ -1,121 +1,148 @@
-import { v5 as uuidv5 } from 'uuid'
-import { RelyingParty } from 'openid'
-import { TokenSet } from 'openid-client'
+import { v5 as uuidv5 } from 'uuid';
+import { RelyingParty } from 'openid';
+import { TokenSet } from 'openid-client';
 import {
   EMAIL_DOMAIN,
   PROVIDER_ID,
   PROVIDER_NAME,
-  SteamProfile
-} from '@/constants'
-import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
+  SteamProfile,
+  VerifyAssertionResult,
+} from '@/constants';
+import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers';
 
+/**
+ * Represents the additional configuration options required for the Steam provider.
+ *
+ * @extends OAuthUserConfig<SteamProfile>
+ */
 export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
-  clientSecret: string
+  clientSecret: string;
+  nextAuthUrl?: string;
 }
 
-export function Steam(
-  options: SteamProviderOptions
-): OAuthConfig<SteamProfile> {
-  const callbackUrl = new URL(process.env.NEXTAUTH_URL || '')
+/**
+ * Creates a configuration object for the Steam authentication provider.
+ *
+ * @param {SteamProviderOptions} providerOptions - The options required to configure the Steam provider.
+ * @returns {OAuthConfig<SteamProfile>} The configuration object for NextAuth.
+ */
+export function Steam(providerOptions: SteamProviderOptions): OAuthConfig<SteamProfile> {
+  const {
+    nextAuthUrl = 'http://localhost:3000',
+    clientSecret,
+    ...options
+  } = providerOptions;
 
-  // https://example.com
-  // https://example.com/api/auth/callback/steam
-  const realm = callbackUrl.origin
-  const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`
-  const path = callbackUrl.pathname + callbackUrl.search // This should give you the path and query string, similar to `req.url`.
+  const callbackUrl = new URL(nextAuthUrl);
+
+  const realm = callbackUrl.origin;
+  const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`;
+  const path = `${callbackUrl.pathname}${callbackUrl.search}`; // Use template literals for consistency
 
   return {
-    options,
+    options: {
+      ...options,
+      clientSecret,
+    },
     id: PROVIDER_ID,
     name: PROVIDER_NAME,
     type: 'oauth',
-    style: {
-      logo: 'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam.svg',
-      logoDark:
-        'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam-dark.svg',
-      bg: '#fff',
-      text: '#000',
-      bgDark: '#000',
-      textDark: '#fff'
-    },
+    style: getProviderStyle(),
     idToken: false,
     checks: ['none'],
     clientId: PROVIDER_ID,
-    authorization: {
-      url: 'https://steamcommunity.com/openid/login',
-      params: {
-        'openid.mode': 'checkid_setup',
-        'openid.ns': 'http://specs.openid.net/auth/2.0',
-        'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
-        'openid.claimed_id':
-          'http://specs.openid.net/auth/2.0/identifier_select',
-        'openid.return_to': returnTo,
-        'openid.realm': realm
-      }
-    },
+    authorization: getAuthorizationParams(returnTo, realm),
     token: {
       async request() {
-        // May throw an error, dunno should I handle it or no
-        const claimedIdentifier = await verifyAssertion(path, realm, returnTo)
+        try {
+          const claimedIdentifier = await verifyAssertion(path, realm, returnTo);
+          if (!claimedIdentifier) throw new Error('Unauthenticated');
 
-        if (!claimedIdentifier) {
-          throw new Error('Unauthenticated')
-        }
+          const steamId = extractSteamId(claimedIdentifier);
+          if (!steamId) throw new Error('Unauthenticated');
 
-        const matches = claimedIdentifier.match(
-          /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/
-        )
-
-        if (!matches) {
-          throw new Error('Unauthenticated')
-        }
-
-        return {
-          tokens: new TokenSet({
-            id_token: uuidv5(returnTo, uuidv5.URL),
-            access_token: uuidv5(returnTo, uuidv5.URL),
-            steamId: matches[1]
-          })
+          return {
+            tokens: new TokenSet({
+              id_token: uuidv5(returnTo, uuidv5.URL),
+              access_token: uuidv5(returnTo, uuidv5.URL),
+              steamId
+            })
+          };
+        } catch (error) {
+          console.error(error);
+          throw error;
         }
       }
     },
     userinfo: {
       async request(ctx) {
-        const response = await fetch(
-          `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${ctx.provider.clientSecret}&steamids=${ctx.tokens.steamId}`
-        )
-
-        const data = await response.json()
-
-        return data.response.players[0]
+        try {
+          const response = await fetch(
+            `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${clientSecret}&steamids=${ctx.tokens.steamId}`
+          );
+          const data = await response.json();
+          return data.response.players[0];
+        } catch (error) {
+          console.error(error);
+          throw error;
+        }
       }
     },
     profile(profile: SteamProfile) {
-      // next.js can't serialize the session if email is missing or null, so I specify user ID
       return {
         id: profile.steamid,
         image: profile.avatarfull,
         email: `${profile.steamid}@${EMAIL_DOMAIN}`,
         name: profile.personaname
-      }
+      };
     }
-  }
+  };
 }
+/**
+ * Provides the styling options for the Steam provider's buttons and UI elements.
+ *
+ * @returns {Object} The style configuration object.
+ */
+const getProviderStyle = () => ({
+    logo: 'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam.svg',
+    logoDark: 'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam-dark.svg',
+    bg: '#fff',
+    text: '#000',
+    bgDark: '#000',
+    textDark: '#fff'
+})
 
 /**
- * Verifies an assertion and returns the claimed identifier if authenticated, otherwise null.
+ * Returns the authorization parameters for the Steam OpenID connection.
+ *
+ * @param {string} returnTo - The URL to which Steam will return after authentication.
+ * @param {string} realm - The realm under which the OpenID authentication is performed.
+ * @returns {Object} The authorization parameters object.
  */
-async function verifyAssertion(
-  url: string,
-  realm: string,
-  returnTo: string
-): Promise<string | null> {
+const getAuthorizationParams = (returnTo: string, realm: string) => ({
+    url: 'https://steamcommunity.com/openid/login',
+    params: {
+      'openid.mode': 'checkid_setup',
+      'openid.ns': 'http://specs.openid.net/auth/2.0',
+      'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
+      'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',
+      'openid.return_to': returnTo,
+      'openid.realm': realm
+    }
+})
+
+/**
+ * Verifies the OpenID authentication assertion.
+ *
+ * @param {string} url - The URL to which the OpenID provider has sent the assertion response.
+ * @param {string} realm - The realm under which the OpenID authentication is performed.
+ * @param {string} returnTo - The URL to which Steam will return after authentication.
+ * @returns {Promise<string|null>} A promise that resolves with the claimed identifier if authenticated, or null otherwise.
+ */
+async function verifyAssertion(url: string, realm: string, returnTo: string): Promise<string | null> {
   const party = new RelyingParty(returnTo, realm, true, false, [])
 
-  const result: {
-    authenticated: boolean
-    claimedIdentifier?: string | undefined
-  } = await new Promise((resolve, reject) => {
+  const result: VerifyAssertionResult = await new Promise((resolve, reject) => {
     party.verifyAssertion(url, (error, result) => {
       if (error) {
         reject(error)
@@ -125,14 +152,16 @@ async function verifyAssertion(
     })
   })
 
-  if (!result.authenticated) {
-    return null
-  }
-
-  return result.claimedIdentifier!
+  return result.authenticated? result.claimedIdentifier! : null 
 }
 
-Steam({
-  clientId: 'test',
-  clientSecret: 'test'
-})
+/**
+ * Extracts the Steam ID from the claimed identifier URL.
+ *
+ * @param {string} claimedIdentifier - The claimed identifier URL returned from Steam OpenID.
+ * @returns {string|null} The extracted Steam ID or null if not found.
+ */
+const extractSteamId = (claimedIdentifier: string): string | null => {
+  const matches = claimedIdentifier.match(/^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/);
+  return matches ? matches[1] : null;
+}

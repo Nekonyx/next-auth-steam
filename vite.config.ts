@@ -1,7 +1,9 @@
 import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import dts from 'vite-plugin-dts'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import EnvironmentPlugin from 'vite-plugin-environment'
 
 import packageJson from './package.json'
 
@@ -9,10 +11,12 @@ export default defineConfig({
   publicDir: 'public',
   resolve: {
     alias: {
-      '@': '/src'
+      '@': '/src',
     }
   },
   plugins: [
+    nodePolyfills(),
+    EnvironmentPlugin('all', { defineOn: 'import.meta.env' }),
     dts({
       include: ['src/']
     }),
