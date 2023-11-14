@@ -1,4 +1,4 @@
-import { v5 as uuidv5 } from 'uuid'
+import { randomUUID } from 'node:crypto'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 import {
@@ -65,8 +65,8 @@ export function Steam(
 
           return {
             tokens: new TokenSet({
-              id_token: uuidv5(returnTo, uuidv5.URL),
-              access_token: uuidv5(returnTo, uuidv5.URL),
+              id_token: randomUUID(),
+              access_token: randomUUID(),
               steamId
             })
           }
