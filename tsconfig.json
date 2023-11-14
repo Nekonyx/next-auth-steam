@@ -18,7 +18,17 @@
     "declarationMap": true,
     "baseUrl": ".",
     "outDir": "dist",
-    "typeRoots": ["node_modules/@types", "src/constants.ts"]
+    "typeRoots": ["node_modules/@types", "src/constants.ts"],
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "exclude": ["vite.config.ts"]
 }

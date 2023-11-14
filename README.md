@@ -6,7 +6,7 @@ This is a streamlined and improved version of the Steam authentication provider 
 
 ## 🌟 What's New?
 
-- ✨ No more need for `request` as a required parameter! 
+- ✨ No more need for `request` as a required parameter!
 - 🛠️ Simplified implementation for `getServerSession`.
 - 🔥 Examples and usage patterns to get you started in no time!
 

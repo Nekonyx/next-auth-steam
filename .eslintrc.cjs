@@ -46,7 +46,7 @@ module.exports = {
       'single',
       { avoidEscape: true, allowTemplateLiterals: true }
     ],
-    'import/no-duplicates': ['error'],
+    'import/no-duplicates': ['error']
   },
   ignorePatterns: ['!src', 'vite.config.ts', '.eslintrc.cjs'],
   parserOptions: {

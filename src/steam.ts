@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto'
+import { v5 as uuidv5 } from 'uuid'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 import {
@@ -10,7 +10,7 @@ import {
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 
 export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
-  clientSecret: string;
+  clientSecret: string
 }
 
 export function Steam(
@@ -72,8 +72,8 @@ export function Steam(
 
         return {
           tokens: new TokenSet({
-            id_token: randomUUID(),
-            access_token: randomUUID(),
+            id_token: uuidv5(),
+            access_token: uuidv5(),
             steamId: matches[1]
           })
         }
