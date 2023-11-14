@@ -1,14 +1,14 @@
 {
-  "name": "next-auth-steam",
-  "license": "WTFPL",
+  "name": "@hyperplay/next-auth-steam",
   "version": "0.1.0",
+  "license": "BUSL-1.1",
   "description": "Steam authentication provider for next-auth",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/red-game-dev/next-auth-steam"
+    "url": "https://github.com/HyperPlay-Gaming/next-auth-steam"
   },
   "files": [
     "dist"

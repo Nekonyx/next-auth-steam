@@ -1,4 +1,4 @@
-import SteamProvider from 'next-auth-steam'
+import SteamProvider from '@hyperplay/next-auth-steam'
 import NextAuth from 'next-auth/next'
 
 import type { NextApiRequest, NextApiResponse } from 'next'
