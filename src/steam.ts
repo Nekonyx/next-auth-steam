@@ -6,7 +6,7 @@ import {
   PROVIDER_ID,
   PROVIDER_NAME,
   SteamProfile
-} from './constants'
+} from '@/constants'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 
 export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
