@@ -6,6 +6,7 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/HyperPlay-Gaming/next-auth-steam"

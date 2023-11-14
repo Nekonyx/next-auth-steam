@@ -25,3 +25,5 @@ dist-ssr
 
 storybook-static
 .vercel
+
+.env
