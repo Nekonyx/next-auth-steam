@@ -49,6 +49,9 @@ devDependencies:
   eslint-plugin-prettier:
     specifier: ^4.2.1
     version: 4.2.1(eslint-config-prettier@8.10.0)(eslint@8.53.0)(prettier@2.8.8)
+  json:
+    specifier: ^11.0.0
+    version: 11.0.0
   next:
     specifier: ^13.3.4
     version: 13.5.6(@babel/core@7.23.3)(react-dom@18.2.0)(react@18.2.0)
@@ -2460,6 +2463,12 @@ packages:
   /json5@2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
+    hasBin: true
+    dev: true
+
+  /json@11.0.0:
+    resolution: {integrity: sha512-N/ITv3Yw9Za8cGxuQqSqrq6RHnlaHWZkAFavcfpH/R52522c26EbihMxnY7A1chxfXJ4d+cEFIsyTgfi9GihrA==}
+    engines: {node: '>=0.10.0'}
     hasBin: true
     dev: true
 
