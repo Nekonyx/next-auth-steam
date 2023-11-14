@@ -1,14 +1,14 @@
-import { v5 as uuidv5 } from 'uuid';
-import { RelyingParty } from 'openid';
-import { TokenSet } from 'openid-client';
+import { v5 as uuidv5 } from 'uuid'
+import { RelyingParty } from 'openid'
+import { TokenSet } from 'openid-client'
 import {
   EMAIL_DOMAIN,
   PROVIDER_ID,
   PROVIDER_NAME,
   SteamProfile,
-  VerifyAssertionResult,
-} from '@/constants';
-import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers';
+  VerifyAssertionResult
+} from '@/constants'
+import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 
 /**
  * Represents the additional configuration options required for the Steam provider.
@@ -16,8 +16,8 @@ import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers';
  * @extends OAuthUserConfig<SteamProfile>
  */
 export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
-  clientSecret: string;
-  nextAuthUrl?: string;
+  clientSecret: string
+  nextAuthUrl?: string
 }
 
 /**
@@ -26,23 +26,25 @@ export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
  * @param {SteamProviderOptions} providerOptions - The options required to configure the Steam provider.
  * @returns {OAuthConfig<SteamProfile>} The configuration object for NextAuth.
  */
-export function Steam(providerOptions: SteamProviderOptions): OAuthConfig<SteamProfile> {
+export function Steam(
+  providerOptions: SteamProviderOptions
+): OAuthConfig<SteamProfile> {
   const {
     nextAuthUrl = 'http://localhost:3000',
     clientSecret,
     ...options
-  } = providerOptions;
+  } = providerOptions
 
-  const callbackUrl = new URL(nextAuthUrl);
+  const callbackUrl = new URL(nextAuthUrl)
 
-  const realm = callbackUrl.origin;
-  const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`;
-  const path = `${callbackUrl.pathname}${callbackUrl.search}`; // Use template literals for consistency
+  const realm = callbackUrl.origin
+  const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`
+  const path = `${callbackUrl.pathname}${callbackUrl.search}` // Use template literals for consistency
 
   return {
     options: {
       ...options,
-      clientSecret,
+      clientSecret
     },
     id: PROVIDER_ID,
     name: PROVIDER_NAME,
@@ -55,11 +57,11 @@ export function Steam(providerOptions: SteamProviderOptions): OAuthConfig<SteamP
     token: {
       async request() {
         try {
-          const claimedIdentifier = await verifyAssertion(path, realm, returnTo);
-          if (!claimedIdentifier) throw new Error('Unauthenticated');
+          const claimedIdentifier = await verifyAssertion(path, realm, returnTo)
+          if (!claimedIdentifier) throw new Error('Unauthenticated')
 
-          const steamId = extractSteamId(claimedIdentifier);
-          if (!steamId) throw new Error('Unauthenticated');
+          const steamId = extractSteamId(claimedIdentifier)
+          if (!steamId) throw new Error('Unauthenticated')
 
           return {
             tokens: new TokenSet({
@@ -67,10 +69,10 @@ export function Steam(providerOptions: SteamProviderOptions): OAuthConfig<SteamP
               access_token: uuidv5(returnTo, uuidv5.URL),
               steamId
             })
-          };
+          }
         } catch (error) {
-          console.error(error);
-          throw error;
+          console.error(error)
+          throw error
         }
       }
     },
@@ -79,12 +81,12 @@ export function Steam(providerOptions: SteamProviderOptions): OAuthConfig<SteamP
         try {
           const response = await fetch(
             `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${clientSecret}&steamids=${ctx.tokens.steamId}`
-          );
-          const data = await response.json();
-          return data.response.players[0];
+          )
+          const data = await response.json()
+          return data.response.players[0]
         } catch (error) {
-          console.error(error);
-          throw error;
+          console.error(error)
+          throw error
         }
       }
     },
@@ -94,9 +96,9 @@ export function Steam(providerOptions: SteamProviderOptions): OAuthConfig<SteamP
         image: profile.avatarfull,
         email: `${profile.steamid}@${EMAIL_DOMAIN}`,
         name: profile.personaname
-      };
+      }
     }
-  };
+  }
 }
 /**
  * Provides the styling options for the Steam provider's buttons and UI elements.
@@ -104,12 +106,13 @@ export function Steam(providerOptions: SteamProviderOptions): OAuthConfig<SteamP
  * @returns {Object} The style configuration object.
  */
 const getProviderStyle = () => ({
-    logo: 'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam.svg',
-    logoDark: 'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam-dark.svg',
-    bg: '#fff',
-    text: '#000',
-    bgDark: '#000',
-    textDark: '#fff'
+  logo: 'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam.svg',
+  logoDark:
+    'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam-dark.svg',
+  bg: '#121212',
+  text: '#fff',
+  bgDark: '#000',
+  textDark: '#fff'
 })
 
 /**
@@ -120,15 +123,15 @@ const getProviderStyle = () => ({
  * @returns {Object} The authorization parameters object.
  */
 const getAuthorizationParams = (returnTo: string, realm: string) => ({
-    url: 'https://steamcommunity.com/openid/login',
-    params: {
-      'openid.mode': 'checkid_setup',
-      'openid.ns': 'http://specs.openid.net/auth/2.0',
-      'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
-      'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',
-      'openid.return_to': returnTo,
-      'openid.realm': realm
-    }
+  url: 'https://steamcommunity.com/openid/login',
+  params: {
+    'openid.mode': 'checkid_setup',
+    'openid.ns': 'http://specs.openid.net/auth/2.0',
+    'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
+    'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',
+    'openid.return_to': returnTo,
+    'openid.realm': realm
+  }
 })
 
 /**
@@ -139,7 +142,11 @@ const getAuthorizationParams = (returnTo: string, realm: string) => ({
  * @param {string} returnTo - The URL to which Steam will return after authentication.
  * @returns {Promise<string|null>} A promise that resolves with the claimed identifier if authenticated, or null otherwise.
  */
-async function verifyAssertion(url: string, realm: string, returnTo: string): Promise<string | null> {
+async function verifyAssertion(
+  url: string,
+  realm: string,
+  returnTo: string
+): Promise<string | null> {
   const party = new RelyingParty(returnTo, realm, true, false, [])
 
   const result: VerifyAssertionResult = await new Promise((resolve, reject) => {
@@ -152,7 +159,7 @@ async function verifyAssertion(url: string, realm: string, returnTo: string): Pr
     })
   })
 
-  return result.authenticated? result.claimedIdentifier! : null 
+  return result.authenticated ? result.claimedIdentifier! : null
 }
 
 /**
@@ -162,6 +169,8 @@ async function verifyAssertion(url: string, realm: string, returnTo: string): Pr
  * @returns {string|null} The extracted Steam ID or null if not found.
  */
 const extractSteamId = (claimedIdentifier: string): string | null => {
-  const matches = claimedIdentifier.match(/^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/);
-  return matches ? matches[1] : null;
+  const matches = claimedIdentifier.match(
+    /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/
+  )
+  return matches ? matches[1] : null
 }

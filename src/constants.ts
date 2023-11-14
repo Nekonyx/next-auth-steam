@@ -40,6 +40,6 @@ export interface SteamProfile
 }
 
 export type VerifyAssertionResult = {
-  authenticated: boolean;
-  claimedIdentifier?: string | undefined;
+  authenticated: boolean
+  claimedIdentifier?: string | undefined
 }

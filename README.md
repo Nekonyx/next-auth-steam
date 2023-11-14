@@ -10,7 +10,7 @@ This is a streamlined and improved version of the Steam authentication provider 
 - 🛠️ Simplified implementation for `getServerSession`.
 - 🔥 Examples and usage patterns to get you started in no time!
 
-## 📦 Install 
+## 📦 Install
 
 ```bash
 npm install @hyperplay/next-auth-steam

@@ -4,7 +4,7 @@
     "target": "ESNext",
     "composite": true,
     "module": "commonjs",
-    "forceConsistentCasingInFileNames":true,
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "Node",
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true
