@@ -30,9 +30,9 @@ export function Steam(
     name: PROVIDER_NAME,
     type: 'oauth',
     style: {
-      logo: 'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/12444ac8e7c44f8a69fa007b056f892240cb1a27/logo/steam.svg',
+      logo: 'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam.svg',
       logoDark:
-        'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/12444ac8e7c44f8a69fa007b056f892240cb1a27/logo/steam-dark.svg',
+        'https://raw.githubusercontent.com/HyperPlay-Gaming/next-auth-steam/b65dc09e98cead3111ecbfaa0ecc15eab7f125d9/logo/steam-dark.svg',
       bg: '#fff',
       text: '#000',
       bgDark: '#000',
