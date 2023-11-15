@@ -46,27 +46,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 ```
 
-### 🔹 Custom Provider Id
-
-```ts
-// pages/api/auth/[...nextauth].ts
-import { NextApiRequest, NextApiResponse } from 'next'
-import NextAuth from 'next-auth'
-import SteamProvider from '@hyperplay/next-auth-steam'
-
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return NextAuth(req, res, {
-    providers: [
-      SteamProvider({
-        clientId: process.env.STEAM_ID!
-        clientSecret: process.env.STEAM_SECRET!
-        nextAuthUrl: process.env.NEXTAUTH_URL!
-      })
-    ]
-  })
-}
-```
-
 ### 🔹 App Directory Integration
 
 ```ts
