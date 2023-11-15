@@ -1,6 +1,6 @@
 {
   "name": "@hyperplay/next-auth-steam",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "license": "BUSL-1.1",
   "description": "Steam authentication provider for next-auth",
   "main": "dist/index.js",
