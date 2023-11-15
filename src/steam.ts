@@ -38,7 +38,7 @@ export function Steam(
   const callbackUrl = new URL(nextAuthUrl)
 
   const realm = callbackUrl.origin
-  const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`
+  const returnTo = `${callbackUrl.href}/api/auth/callback/${PROVIDER_ID}`
   const path = `${callbackUrl.pathname}${callbackUrl.search}`
 
   return {
