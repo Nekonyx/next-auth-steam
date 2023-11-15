@@ -3,7 +3,7 @@ import { defineConfig, loadEnv } from 'vite'
 import dts from 'vite-plugin-dts'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import EnvironmentPlugin from 'vite-plugin-environment'
+import { visualizer } from 'rollup-plugin-visualizer';
 
 import packageJson from './package.json'
 
@@ -15,8 +15,9 @@ export default defineConfig({
     }
   },
   plugins: [
-    nodePolyfills(),
-    EnvironmentPlugin('all', { defineOn: 'import.meta.env' }),
+    nodePolyfills({
+      include: ['crypto', 'util', 'querystring', 'stream']
+    }),
     dts({
       include: ['src/']
     }),
@@ -27,7 +28,8 @@ export default defineConfig({
           dest: ''
         }
       ]
-    })
+    }),
+    visualizer(),
   ],
   build: {
     copyPublicDir: true,
@@ -40,7 +42,16 @@ export default defineConfig({
     },
     rollupOptions: {
       external: [...Object.keys(packageJson.peerDependencies)],
-      input: [resolve(__dirname, './src/index.ts')]
+      input: [resolve(__dirname, './src/index.ts')],
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            const directories = id.split('node_modules/')[1].split('/');
+            const name = directories[0];
+            return `vendor/${name}`;
+          }
+        }
+      }
     }
   }
 })
