@@ -18,20 +18,20 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'yarn'
+          cache: 'npm'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
-          yarn install --immutable --frozen-lockfile
+          npm ci
 
       - name: Get previous version
         id: get_previous_version
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
-          yarn info @hyperplay/next-auth-steam version --verbose
-          echo ::set-output name=previous_version::$(yarn info @hyperplay/next-auth-steam version | sed -n 2p | tr -d '[:space:]')
+          npm view @hyperplay/next-auth-steam version --verbose
+          echo ::set-output name=previous_version::$(npm view @hyperplay/next-auth-steam version | tr -d '[:space:]')
 
       - name: Set current version
         id: set_current_version
@@ -47,16 +47,16 @@ jobs:
       - name: Build @hyperplay/next-auth-steam
         if: steps.compare_versions.outputs.do_release == 'true'
         run: |
-          yarn build
+          npm run build
 
       - name: Release to npm
         if: steps.compare_versions.outputs.do_release == 'true'
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
           if [[ ${{ steps.set_current_version.outputs.current_version }} == *"-alpha"* ]]; then
-            yarn publish --tag alpha
+            npm publish --tag alpha
           elif [[ ${{ steps.set_current_version.outputs.current_version }} == *"-beta"* ]]; then
-            yarn publish --tag beta
+            npm publish --tag beta
           else
-            yarn publish
+            npm publish
           fi;
