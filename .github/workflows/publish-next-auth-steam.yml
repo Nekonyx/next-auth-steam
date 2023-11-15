@@ -1,0 +1,62 @@
+name: Release to npm
+
+on:
+  push:
+    paths:
+      - 'package.json'
+    branches:
+      - main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+          yarn install --immutable --frozen-lockfile
+
+      - name: Get previous version
+        id: get_previous_version
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+          yarn info @hyperplay/next-auth-steam version --verbose
+          echo ::set-output name=previous_version::$(yarn info @hyperplay/next-auth-steam version | sed -n 2p | tr -d '[:space:]')
+
+      - name: Set current version
+        id: set_current_version
+        run: echo ::set-output name=current_version::$(node -p "require('./package.json').version")
+
+      - name: Compare versions
+        id: compare_versions
+        env:
+          PREVIOUS_VERSION: ${{ steps.get_previous_version.outputs.previous_version }}
+          CURRENT_VERSION: ${{ steps.set_current_version.outputs.current_version }}
+        run: echo ::set-output name=do_release::$(node -p "Number(process.env.INPUT_FORCE_RELEASE) || require('semver/functions/gt')(process.env.CURRENT_VERSION, process.env.PREVIOUS_VERSION)")
+
+      - name: Build @hyperplay/next-auth-steam
+        if: steps.compare_versions.outputs.do_release == 'true'
+        run: |
+          yarn build
+
+      - name: Release to npm
+        if: steps.compare_versions.outputs.do_release == 'true'
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
+          if [[ ${{ steps.set_current_version.outputs.current_version }} == *"-alpha"* ]]; then
+            yarn publish --tag alpha
+          elif [[ ${{ steps.set_current_version.outputs.current_version }} == *"-beta"* ]]; then
+            yarn publish --tag beta
+          else
+            yarn publish
+          fi;
