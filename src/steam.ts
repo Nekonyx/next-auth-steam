@@ -39,7 +39,7 @@ export function Steam(
 
   const realm = callbackUrl.origin
   const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`
-  const path = `${callbackUrl.pathname}${callbackUrl.search}` // Use template literals for consistency
+  const path = `${callbackUrl.pathname}${callbackUrl.search}`
 
   return {
     options: {
