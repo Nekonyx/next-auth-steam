@@ -46,6 +46,38 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 ```
 
+### 🔹 Custom Next Auth URL for Provider
+
+If you would like to customize your callback URL as `/steam` or some other route, you can easily do so as below.
+
+```ts
+// app/api/auth/[...nextauth]/route.ts
+import { PROVIDER_ID } from '@hyperplay/next-auth-steam'
+
+// ...
+
+async function handler(
+  req: NextRequest,
+  ctx: {
+    params: {
+      nextauth: string[]
+    }
+  }
+) {
+  // @ts-ignore
+  return NextAuth(req, ctx, {
+    providers: [
+      SteamProvider({
+        clientSecret: process.env.STEAM_SECRET!
+        nextAuthUrl: `${process.env.NEXTAUTH_URL!}/${PROVIDER_ID}` // https://example.com/api/auth/callback/steam
+      })
+    ]
+  })
+}
+
+export { handler as GET, handler as POST }
+```
+
 ### 🔹 App Directory Integration
 
 ```ts

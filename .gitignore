@@ -28,4 +28,4 @@ storybook-static
 
 .env
 vite-env.d.ts
-stats.html
+stats.*

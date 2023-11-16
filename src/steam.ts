@@ -30,7 +30,7 @@ export function Steam(
   providerOptions: SteamProviderOptions
 ): OAuthConfig<SteamProfile> {
   const {
-    nextAuthUrl = 'http://localhost:3000',
+    nextAuthUrl = 'http://localhost:3000/api/auth/callback',
     clientSecret,
     ...options
   } = providerOptions
@@ -38,7 +38,7 @@ export function Steam(
   const callbackUrl = new URL(nextAuthUrl)
 
   const realm = callbackUrl.origin
-  const returnTo = `${callbackUrl.href}/api/auth/callback/${PROVIDER_ID}`
+  const returnTo = callbackUrl.href
   const path = `${callbackUrl.pathname}${callbackUrl.search}`
 
   return {
