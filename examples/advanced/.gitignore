@@ -1,0 +1,8 @@
+/node_modules/
+/.next/
+/.env
+
+*.local
+.vscode
+.vercel
+.idea

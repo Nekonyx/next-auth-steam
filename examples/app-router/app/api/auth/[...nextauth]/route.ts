@@ -9,10 +9,13 @@ async function handler(
 ) {
   return NextAuth(req, ctx, {
     providers: [
-      SteamProvider({
-        clientSecret: process.env.STEAM_SECRET!,
-        nextAuthUrl: process.env.NEXTAUTH_URL!
-      })
+      SteamProvider(
+        {
+          clientSecret: process.env.STEAM_SECRET!,
+          nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`
+        },
+        req
+      )
     ]
   })
 }

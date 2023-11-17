@@ -1,51 +1,8 @@
-import { AuthOptions } from 'next-auth'
-import NextAuth from 'next-auth/next'
-import SteamProvider from '@hyperplay/next-auth-steam'
+import NextAuth from 'next-auth'
+import { authOptionsWithRequest } from '@/utils/auth'
 
-import type { NextApiRequest, NextApiResponse } from 'next'
-
-import { PrismaAdapter } from '@next-auth/prisma-adapter'
-import { PrismaClient } from '@prisma/client'
-
-const prisma = new PrismaClient()
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  return NextAuth(req, res, getAuthOptions())
+const auth = async (req: any, res: any) => {
+  return await NextAuth(req, res, authOptionsWithRequest(req))
 }
 
-export function getAuthOptions(): AuthOptions {
-  return {
-    adapter: PrismaAdapter(prisma),
-    providers: [
-      SteamProvider({
-        clientSecret: process.env.STEAM_SECRET!,
-        nextAuthUrl: process.env.NEXTAUTH_URL!
-      })
-    ],
-    callbacks: {
-      async session({ session }) {
-        const prismaUser = await prisma.user.findUnique({
-          where: {
-            email: session.user?.email!
-          },
-          include: {
-            accounts: true
-          }
-        })
-
-        const steamAccount = prismaUser?.accounts.find(
-          (a) => a.provider == 'steam'
-        )
-
-        // @ts-expect-error
-        session.user.steamId = steamAccount?.steamId
-
-        return session
-      }
-    },
-    secret: process.env.JWT_SECRET!
-  }
-}
+export { auth as GET, auth as POST }
