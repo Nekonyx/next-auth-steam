@@ -2,13 +2,15 @@ import { randomUUID } from 'node:crypto'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 import {
-  EMAIL_DOMAIN,
-  PROVIDER_ID,
-  PROVIDER_NAME,
+  STEAM_EMAIL_DOMAIN,
+  STEAM_PROVIDER_ID,
+  STEAM_PROVIDER_NAME,
   SteamProfile,
   VerifyAssertionResult
 } from '@/constants'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
+import { NextRequest } from 'next/server'
+import { NextApiRequest } from 'next'
 
 /**
  * Represents the additional configuration options required for the Steam provider.
@@ -27,7 +29,8 @@ export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
  * @returns {OAuthConfig<SteamProfile>} The configuration object for NextAuth.
  */
 export function Steam(
-  providerOptions: SteamProviderOptions
+  providerOptions: SteamProviderOptions,
+  request?: NextApiRequest | NextRequest
 ): OAuthConfig<SteamProfile> {
   const {
     nextAuthUrl = 'http://localhost:3000/api/auth/callback',
@@ -38,26 +41,35 @@ export function Steam(
   const callbackUrl = new URL(nextAuthUrl)
 
   const realm = callbackUrl.origin
-  const returnTo = callbackUrl.href
-  const path = `${callbackUrl.pathname}${callbackUrl.search}`
+  const returnTo = `${callbackUrl.href}/${STEAM_PROVIDER_ID}`
 
   return {
     options: {
       ...options,
       clientSecret
     },
-    id: PROVIDER_ID,
-    name: PROVIDER_NAME,
+    id: STEAM_PROVIDER_ID,
+    name: STEAM_PROVIDER_NAME,
     type: 'oauth',
     style: getProviderStyle(),
     idToken: false,
     checks: ['none'],
-    clientId: PROVIDER_ID,
+    clientId: STEAM_PROVIDER_ID,
     authorization: getAuthorizationParams(returnTo, realm),
     token: {
       async request() {
         try {
-          const claimedIdentifier = await verifyAssertion(path, realm, returnTo)
+          if (!request?.url) {
+            throw new Error(
+              'No request URL provided. You will require to pass `request` of any type NextApiRequest or NextRequest, when you need to use `token.request()`. Generally this on SignIn page for outdated openId on Steam.'
+            )
+          }
+
+          const claimedIdentifier = await verifyAssertion(
+            request.url,
+            realm,
+            returnTo
+          )
           if (!claimedIdentifier) throw new Error('Unauthenticated')
 
           const steamId = extractSteamId(claimedIdentifier)
@@ -94,7 +106,7 @@ export function Steam(
       return {
         id: profile.steamid,
         image: profile.avatarfull,
-        email: `${profile.steamid}@${EMAIL_DOMAIN}`,
+        email: `${profile.steamid}@${STEAM_EMAIL_DOMAIN}`,
         name: profile.personaname
       }
     }
@@ -147,6 +159,8 @@ async function verifyAssertion(
   realm: string,
   returnTo: string
 ): Promise<string | null> {
+  if (!url) return null
+
   const party = new RelyingParty(returnTo, realm, true, false, [])
 
   const result: VerifyAssertionResult = await new Promise((resolve, reject) => {
