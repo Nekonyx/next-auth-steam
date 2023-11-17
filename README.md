@@ -144,7 +144,7 @@ Dive into more examples in the [examples](examples) folder and get your Steam in
 We would like to make the support for Steam seamless as possible
 
 - The package itself we will aim to optimize the bundle size, although since has `openid` npm package which uses node modules makes it difficult. We're using vite at the moment, with `vite-plugin-node-polyfills`.
-- `Request` it is something that I'd like to deprecate near the future, another reason why it is optional and only necessary in one place `NextAuth()`. This is difficult at the moment, due of steam has legacy version of `openid`, else it would be easily integrable just like the other providers. You can see further at `next-auth -> core\lib\oauth\callback.js:103`, and a [Vercel/Next discussion](https://github.com/vercel/next.js/discussions/42732) about why request is not accessible on the backend upon callbacks. 
+- `Request` it is something that I'd like to deprecate near the future, another reason why it is optional and only necessary in one place `NextAuth()`. This is difficult at the moment, due of steam has legacy version of `openid`, else it would be easily integrable just like the other providers. You can see further at `next-auth -> core\lib\oauth\callback.js:103`, and a [Vercel/Next discussion](https://github.com/vercel/next.js/discussions/42732) about why request is not accessible on the backend upon callbacks.
 - With a hope that steam will upgrade their implementation like the other providers, this package could implement those changes to support steam newer implementation, which eventually we hope that NextJS will have it as part of their providers implementation.
 
 ## ⏳ Something went wrong
