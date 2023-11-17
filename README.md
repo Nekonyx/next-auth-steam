@@ -66,7 +66,6 @@ export const authOptions: AuthOptions = {
     ...
     SteamProvider({
       clientSecret: process.env.STEAM_CLIENT_SECRET!,
-      // This will move inside the package soon
       nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
     }),
   ]
