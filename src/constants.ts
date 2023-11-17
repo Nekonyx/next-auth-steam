@@ -1,6 +1,6 @@
-export const PROVIDER_ID = 'steam'
-export const PROVIDER_NAME = 'Steam'
-export const EMAIL_DOMAIN = 'steamcommunity.com'
+export const STEAM_PROVIDER_ID = 'steam'
+export const STEAM_PROVIDER_NAME = 'Steam'
+export const STEAM_EMAIL_DOMAIN = 'steamcommunity.com'
 
 export enum CommunityVisibilityState {
   Private = 1,
