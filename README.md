@@ -67,7 +67,7 @@ export const authOptions: AuthOptions = {
     SteamProvider({
       clientSecret: process.env.STEAM_CLIENT_SECRET!,
       // This will move inside the package soon
-      nextAuthUrl: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL!}/api/auth/callback`,
+      nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
     }),
   ]
   callbacks: {
@@ -106,8 +106,7 @@ export const authOptionsWithRequest: (request: NextApiRequest | NextRequest) = (
       ...authOptions.providers.filter(({ id }) =>  id !== STEAM_PROVIDER_ID),
       SteamProvider({
         clientSecret: process.env.STEAM_CLIENT_SECRET!,
-        // This will move inside the package soon
-        nextAuthUrl: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL!}/api/auth/callback`,
+        nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
       }, request),
     ],
   };

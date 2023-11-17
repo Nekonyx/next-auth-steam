@@ -12,9 +12,9 @@ export const authOptions: AuthOptions = {
     SteamProvider({
       clientSecret: process.env.STEAM_CLIENT_SECRET!,
       // /api/auth/callback/discord?code=465468 302 in 1524ms
-      // `${process.env.NEXT_PUBLIC_NEXTAUTH_URL!}/oauth/steam`
+      // `${process.env.NEXTAUTH_URL!}/oauth/steam`
 
-      nextAuthUrl: `${process.env.NEXT_PUBLIC_NEXTAUTH_URL!}/api/auth/callback` //process.env.NEXT_PUBLIC_NEXTAUTH_URL!,
+      nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback` //process.env.NEXTAUTH_URL!,
     })
   ],
   callbacks: {
@@ -56,8 +56,7 @@ export const authOptionsWithRequest: (
         {
           clientSecret: process.env.STEAM_CLIENT_SECRET!,
           // This will move inside the package soon
-          nextAuthUrl: `${process.env
-            .NEXT_PUBLIC_NEXTAUTH_URL!}/api/auth/callback`
+          nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`
         },
         request
       )
