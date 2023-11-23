@@ -37,7 +37,7 @@ export default defineConfig({
     lib: {
       entry: resolve('src', 'index.ts'),
       name: 'HyperplayNextAuthSteam',
-      formats: ['es'],
+      formats: ['es', 'cjs'],
       fileName: (format) => `index.${format}.js`
     },
     rollupOptions: {

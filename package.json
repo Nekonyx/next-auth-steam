@@ -3,7 +3,7 @@
   "version": "0.1.10",
   "license": "BUSL-1.1",
   "description": "Steam authentication provider for next-auth",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "private": false,
