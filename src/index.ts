@@ -145,9 +145,10 @@ export type VerifyAssertionResult = {
  *
  * @extends OAuthUserConfig<SteamProfile>
  */
-export interface SteamProviderOptions extends OAuthUserConfig<SteamProfile> {
+export interface SteamProviderOptions extends Omit<OAuthUserConfig<SteamProfile>, 'clientId'> {
   clientSecret: string
   nextAuthUrl?: string
+  clientId?: string
 }
 
 /**
@@ -316,3 +317,5 @@ const extractSteamId = (claimedIdentifier: string): string | null => {
   )
   return matches ? matches[1] : null
 }
+
+export default Steam;
