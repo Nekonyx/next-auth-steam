@@ -56,7 +56,7 @@ export type onUserInfoRequestContext = {
  * @extends OAuthUserConfig<SteamProfile>
  */
 export interface SteamProviderOptions
-  extends Omit<OAuthUserConfig<SteamProfile>, 'clientId'> {
+  extends Omit<OAuthUserConfig<SteamProfile>, 'clientId' | 'clientSecret'> {
   nextAuthUrl?: string
   onUserInfoRequest?: (ctx: onUserInfoRequestContext) => Promise<object>
 }
