@@ -33,24 +33,27 @@ This setup can be utlized for both app router and legacy version router.
 
 ```ts
 // app/api/auth/[...nextauth]/route.ts
-import NextAuth from "next-auth";
+import NextAuth from 'next-auth'
 
 const auth = async (req: any, res: any) => {
   return await NextAuth(req, res, {
     providers: [
-      SteamProvider({
-        nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback` // https://example.com/api/auth/callback/steam
-      }, req)
+      SteamProvider(
+        {
+          nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback` // https://example.com/api/auth/callback/steam
+        },
+        req
+      )
     ]
-  });
-};
+  })
+}
 
-export { auth as GET, auth as POST };
+export { auth as GET, auth as POST }
 ```
 
 ### 🔹 Advanced Authentication | Real Example
 
-This example covers a real world scenario authentication with fetching of steam user data. In simple terms we've got `onUserInfoRequest` which where you will get your steam player summary data with your own API KEY. 
+This example covers a real world scenario authentication with fetching of steam user data. In simple terms we've got `onUserInfoRequest` which where you will get your steam player summary data with your own API KEY.
 
 ```tsx
 // utils/auth.ts
@@ -67,10 +70,10 @@ export const authOptions: AuthOptions = {
     SteamProvider({
       nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
       onUserInfoRequest: (ctx: onUserInfoRequestContext) => {
-        // execute something on token request 
+        // execute something on token request
         // some profile data which will be returned back to you on the client
         // example get the player data and merge it with the user info, therefore you wont need to pass any secret to us
-        
+
         const response = await fetch(
           `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${MY_API_KEY}&steamids=${ctx.tokens.steamId}`
         )

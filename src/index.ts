@@ -1,9 +1,9 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid'
 import { BaseClient, TokenSet, TokenSetParameters } from 'openid-client'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 import type { NextRequest } from 'next/server'
 import type { NextApiRequest } from 'next'
-import { Profile } from 'next-auth';
+import { Profile } from 'next-auth'
 
 /**
  * The provider ID for Steam authentication.
@@ -21,11 +21,7 @@ export const STEAM_EMAIL_DOMAIN = 'steamcommunity.com'
 /**
  * Represents a Steam profile.
  */
-export interface SteamProfile
-  extends Record<
-    string,
-    string | number
-  > {
+export interface SteamProfile extends Record<string, string | number> {
   /**
    * The Steam ID of the user.
    */
@@ -37,22 +33,21 @@ export interface SteamProfile
   /**
    * The token id as random uuid4
    */
-  id_token: string;
+  id_token: string
   /**
    * The access token which is dummy as random uuid4
    */
-  access_token: string;
+  access_token: string
 }
 
-
 export type onUserInfoRequestContext = {
-  tokens: TokenSetParameters;
+  tokens: TokenSetParameters
 } & {
-  client: BaseClient;
+  client: BaseClient
   provider: OAuthConfig<SteamProfile> & {
-      signinUrl: string;
-      callbackUrl: string;
-  };
+    signinUrl: string
+    callbackUrl: string
+  }
 }
 
 /**
@@ -60,7 +55,8 @@ export type onUserInfoRequestContext = {
  *
  * @extends OAuthUserConfig<SteamProfile>
  */
-export interface SteamProviderOptions extends Omit<OAuthUserConfig<SteamProfile>, 'clientId'> {
+export interface SteamProviderOptions
+  extends Omit<OAuthUserConfig<SteamProfile>, 'clientId'> {
   nextAuthUrl?: string
   onUserInfoRequest?: (ctx: onUserInfoRequestContext) => Promise<object>
 }
@@ -77,7 +73,9 @@ export function Steam(
 ): OAuthConfig<SteamProfile> {
   const {
     nextAuthUrl = 'http://localhost:3000/api/auth/callback',
-    onUserInfoRequest = async () => { return {} },
+    onUserInfoRequest = async () => {
+      return {}
+    },
     ...options
   } = providerOptions
 
@@ -88,7 +86,7 @@ export function Steam(
 
   return {
     options: {
-      ...options,
+      ...options
     } as OAuthUserConfig<SteamProfile>,
     id: STEAM_PROVIDER_ID,
     name: STEAM_PROVIDER_NAME,
@@ -120,40 +118,43 @@ export function Steam(
               id_token: uuidv4(),
               access_token: uuidv4(),
               providerAccountId: steamId,
-              provider: STEAM_PROVIDER_ID,
+              provider: STEAM_PROVIDER_ID
             })
           }
         } catch (error) {
           console.error(error)
-          throw error;
+          throw error
         }
       }
     },
     userinfo: {
       async request(ctx) {
         try {
-          const data = await onUserInfoRequest(ctx);
+          const data = await onUserInfoRequest(ctx)
 
           if (typeof data !== 'object') {
-            throw new Error("Something went wrong on onUserInfoRequest, make sure you're returning an object", data)
+            throw new Error(
+              "Something went wrong on onUserInfoRequest, make sure you're returning an object",
+              data
+            )
           }
 
           return {
             providerAccountId: ctx.tokens.providerAccountId as string,
             provider: STEAM_PROVIDER_ID,
-            ...data,
+            ...data
           } as Profile
         } catch (error) {
           console.error(error)
-          throw error;
+          throw error
         }
       }
     },
     profile(profile: SteamProfile) {
       return {
-        id: profile.providerAccountId as unknown as string || '',
+        id: (profile.providerAccountId as unknown as string) || '',
         email: `${profile.providerAccountId}@${STEAM_EMAIL_DOMAIN}`,
-        ...profile,
+        ...profile
       }
     }
   }
@@ -199,47 +200,46 @@ const getAuthorizationParams = (returnTo: string, realm: string) => ({
  * @returns {Promise<string|null>} A promise that resolves with the claimed identifier if authenticated, or null otherwise.
  */
 async function verifyAssertion(url: string): Promise<string | null> {
-  if (!url) return null;
+  if (!url) return null
 
-  const { searchParams } = new URL(url);
-  const signed = searchParams.get('openid.signed') || '';
-  const token_params: Record<string, string> = {};
+  const { searchParams } = new URL(url)
+  const signed = searchParams.get('openid.signed') || ''
+  const token_params: Record<string, string> = {}
 
   for (const val of signed.split(',')) {
-      token_params[`openid.${val}`] = searchParams.get(`openid.${val}`) || '';
+    token_params[`openid.${val}`] = searchParams.get(`openid.${val}`) || ''
   }
 
-  const token_url = new URL('https://steamcommunity.com/openid/login'); 
+  const token_url = new URL('https://steamcommunity.com/openid/login')
   const token_url_params = new URLSearchParams({
-      'openid.assoc_handle': searchParams.get('openid.assoc_handle') || '',
-      'openid.signed': signed,
-      'openid.sig': searchParams.get('openid.sig') || '',
-      'openid.ns': 'http://specs.openid.net/auth/2.0',
-      'openid.mode': 'check_authentication',
-      ...token_params,
-  });
+    'openid.assoc_handle': searchParams.get('openid.assoc_handle') || '',
+    'openid.signed': signed,
+    'openid.sig': searchParams.get('openid.sig') || '',
+    'openid.ns': 'http://specs.openid.net/auth/2.0',
+    'openid.mode': 'check_authentication',
+    ...token_params
+  })
 
-  token_url.search = token_url_params.toString();
-  
+  token_url.search = token_url_params.toString()
+
   const token_res = await fetch(token_url, {
-      method: 'POST',
-      headers: {
-          'Accept-language': 'en',
-          'Content-type': 'application/x-www-form-urlencoded',
-          'Content-Length': `${token_url_params.toString().length}`,
-      },
-      body: token_url_params.toString(),
-  });
+    method: 'POST',
+    headers: {
+      'Accept-language': 'en',
+      'Content-type': 'application/x-www-form-urlencoded',
+      'Content-Length': `${token_url_params.toString().length}`
+    },
+    body: token_url_params.toString()
+  })
 
-  const result = await token_res.text();
+  const result = await token_res.text()
 
   if (result.match(/is_valid\s*:\s*true/i)) {
-      return token_url_params.get('openid.claimed_id');
-  } 
+    return token_url_params.get('openid.claimed_id')
+  }
 
-  return null;
+  return null
 }
-
 
 /**
  * Extracts the Steam ID from the claimed identifier URL.
@@ -254,4 +254,4 @@ const extractSteamId = (claimedIdentifier: string): string | null => {
   return matches ? matches[1] : null
 }
 
-export default Steam;
+export default Steam
