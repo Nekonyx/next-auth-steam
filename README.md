@@ -9,6 +9,7 @@ This is a streamlined and improved version of the Steam authentication provider 
 - ✨ Request parameter is optional in majority of the cases, although this is required when utilized with `NextAuth`. Therefore for `NextAuth()` you should pass it by default. However on `useSession` or `getServerSession` is optional.
 - 🛠️ Simplified implementation for `getServerSession`.
 - 🔥 Examples and usage patterns to get you started in no time!
+- `onUserInfoRequest` a simple method that you can have access to the context, plus keeping your api key secure, why? We value your security. These keys shouldn't be just passed when is not needed.
 
 ## 📦 Install
 
@@ -38,7 +39,6 @@ const auth = async (req: any, res: any) => {
   return await NextAuth(req, res, {
     providers: [
       SteamProvider({
-        clientSecret: process.env.STEAM_SECRET!
         nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback` // https://example.com/api/auth/callback/steam
       }, req)
     ]
@@ -50,7 +50,7 @@ export { auth as GET, auth as POST };
 
 ### 🔹 Advanced Authentication | Real Example
 
-This example covers a real world scenario authentication with fetching of steam user data
+This example covers a real world scenario authentication with fetching of steam user data. In simple terms we've got `onUserInfoRequest` which where you will get your steam player summary data with your own API KEY. 
 
 ```tsx
 // utils/auth.ts
@@ -65,8 +65,19 @@ export const authOptions: AuthOptions = {
   providers: [
     ...
     SteamProvider({
-      clientSecret: process.env.STEAM_CLIENT_SECRET!,
       nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
+      onUserInfoRequest: (ctx: onUserInfoRequestContext) => {
+        // execute something on token request 
+        // some profile data which will be returned back to you on the client
+        // example get the player data and merge it with the user info, therefore you wont need to pass any secret to us
+        
+        const response = await fetch(
+          `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${MY_API_KEY}&steamids=${ctx.tokens.steamId}`
+        )
+
+        const data = await response.json()
+        return data.response.players[0]
+      }
     }),
   ]
   callbacks: {
@@ -104,7 +115,6 @@ export const authOptionsWithRequest: (request: NextApiRequest | NextRequest) = (
     providers: [
       ...authOptions.providers.filter(({ id }) =>  id !== STEAM_PROVIDER_ID),
       SteamProvider({
-        clientSecret: process.env.STEAM_CLIENT_SECRET!,
         nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
       }, request),
     ],
