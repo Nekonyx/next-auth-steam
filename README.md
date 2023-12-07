@@ -34,13 +34,26 @@ This setup can be utlized for both app router and legacy version router.
 ```ts
 // app/api/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth'
+import { onUserInfoRequestContext } from '@hyperplay/next-auth-steam'
 
 const auth = async (req: any, res: any) => {
   return await NextAuth(req, res, {
     providers: [
       SteamProvider(
         {
-          nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback` // https://example.com/api/auth/callback/steam
+          nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`, // https://example.com/api/auth/callback/steam
+          onUserInfoRequest: (ctx: onUserInfoRequestContext) => {
+            // execute something on token request
+            // some profile data which will be returned back to you on the client
+            // example get the player data and merge it with the user info, therefore you wont need to pass any secret to us
+
+            const response = await fetch(
+              `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${MY_API_KEY}&steamids=${ctx.tokens.steamId}`
+            )
+
+            const data = await response.json()
+            return data.response.players[0]
+          }
         },
         req
       )
@@ -58,7 +71,7 @@ This example covers a real world scenario authentication with fetching of steam 
 ```tsx
 // utils/auth.ts
 import { AuthOptions } from "next-auth";
-import { STEAM_PROVIDER_ID } from '@hyperplay/next-auth-steam'
+import { STEAM_PROVIDER_ID, onUserInfoRequestContext } from '@hyperplay/next-auth-steam'
 
 export const authOptions: AuthOptions = {
   session: {
@@ -69,18 +82,6 @@ export const authOptions: AuthOptions = {
     ...
     SteamProvider({
       nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
-      onUserInfoRequest: (ctx: onUserInfoRequestContext) => {
-        // execute something on token request
-        // some profile data which will be returned back to you on the client
-        // example get the player data and merge it with the user info, therefore you wont need to pass any secret to us
-
-        const response = await fetch(
-          `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${MY_API_KEY}&steamids=${ctx.tokens.steamId}`
-        )
-
-        const data = await response.json()
-        return data.response.players[0]
-      }
     }),
   ]
   callbacks: {
@@ -119,6 +120,18 @@ export const authOptionsWithRequest: (request: NextApiRequest | NextRequest) = (
       ...authOptions.providers.filter(({ id }) =>  id !== STEAM_PROVIDER_ID),
       SteamProvider({
         nextAuthUrl: `${process.env.NEXTAUTH_URL!}/api/auth/callback`,
+        onUserInfoRequest: (ctx: onUserInfoRequestContext) => {
+          // execute something on token request
+          // some profile data which will be returned back to you on the client
+          // example get the player data and merge it with the user info, therefore you wont need to pass any secret to us
+
+          const response = await fetch(
+            `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${MY_API_KEY}&steamids=${ctx.tokens.steamId}`
+          )
+
+          const data = await response.json()
+          return data.response.players[0]
+        }
       }, request),
     ],
   };
