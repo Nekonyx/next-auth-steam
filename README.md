@@ -176,3 +176,9 @@ We would like to make the support for Steam seamless as possible
 Let us know about the issue, you can open an issue on the [Github repository](https://github.com/HyperPlay-Gaming/next-auth-steam) | PR's are welcome and it is helpful not only for us, but for everyone else who uses the package & future engineers who require it.
 
 We highly suggest you to make sure that the package is updated to latest version, as we may need to update the implementation as per times changes.
+
+## 🕹️ HypePlay Labs .Inc
+
+A web3-friendly game store from the future. The [HyperPlay](https://www.hyperplay.xyz/) Store also aggregates Epic Games, GOG, and Amazon Prime Gaming.
+
+
