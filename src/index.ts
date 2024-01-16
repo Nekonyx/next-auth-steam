@@ -25,7 +25,7 @@ export interface SteamProfile extends Record<string, string | number> {
   /**
    * The Steam ID of the user.
    */
-  providerAccountId: number
+  providerAccountId: string
   /**
    * The current provider
    */
@@ -152,9 +152,10 @@ export function Steam(
     },
     profile(profile: SteamProfile) {
       return {
-        id: (profile.providerAccountId as unknown as string) || '',
+        id: profile.providerAccountId,
         email: `${profile.providerAccountId}@${STEAM_EMAIL_DOMAIN}`,
-        ...profile
+        name: '',
+        image: '',
       }
     }
   }
