@@ -2,9 +2,34 @@
 
 steam authentication provider for [next-auth](https://npm.im/next-auth).
 
-## Example
+## Usage
 
-### Basic usage
+### Using App Router
+
+```ts
+// app/api/auth/[...nextauth]/route.ts
+async function handler(
+  req: NextRequest,
+  ctx: { params: { nextauth: string[] } }
+) {
+  // @ts-ignore
+  return NextAuth(req, ctx, {
+    providers: [
+      SteamProvider(req, {
+        clientSecret: process.env.STEAM_SECRET!,
+        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      })
+    ]
+  })
+}
+
+export {
+  handler as GET,
+  handler as POST
+}
+```
+
+### Using Pages Router
 
 ```ts
 // pages/api/auth/[...nextauth].ts
@@ -25,49 +50,20 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 }
 ```
 
-### App directory usage
+### Retrieving Steam profile data
+
+Use next-auth's [callbacks](https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks) to retrieve Steam profile data:
 
 ```ts
-// app/api/auth/[...nextauth]/route.ts
-async function handler(
-  req: NextRequest,
-  ctx: {
-    params: {
-      nextauth: string[]
-    }
-  }
-) {
-  // @ts-ignore
-  return NextAuth(req, ctx, {
-    providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
-      })
-    ]
-  })
-}
-
-export {
-  handler as GET,
-  handler as POST
-}
-```
-
-### Retrieve Steam user information
-
-To obtain all data of Steam user, use these two callbacks to retrieve user's information:
-
-https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks
-
-```ts
+// (pages/app)/api/auth/[...nextauth].ts
 import { PROVIDER_ID } from 'next-auth-steam'
-
-// ...
 
 return NextAuth(req, res, {
   providers: [
-    SteamProvider( ... )
+    SteamProvider(req, {
+      clientSecret: process.env.STEAM_SECRET!,
+      callbackUrl: 'http://localhost:3000/api/auth/callback'
+    })
   ],
   callbacks: {
     jwt({ token, account, profile }) {
@@ -87,6 +83,15 @@ return NextAuth(req, res, {
     }
   }
 })
+
+// Somewhere in your components
+import { useSession, signIn, signOut } from "next-auth/react"
+
+export default function Component() {
+  const { data } = useSession()
+
+  return <div>Hello, {data?.user.steam.personaname}</div>
+}
 ```
 
-Other examples are in [examples](examples) folder.
+More examples are in [examples](examples) folder.
