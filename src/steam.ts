@@ -2,22 +2,17 @@ import { randomUUID } from 'crypto'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 
-import {
-  EMAIL_DOMAIN,
-  PROVIDER_ID,
-  PROVIDER_NAME,
-  SteamProfile
-} from './constants'
+import { EMAIL_DOMAIN, PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
 
 import type { NextApiRequest } from 'next'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 import type { NextRequest } from 'next/server'
 
-// prettier-ignore
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
   /** @example 'https://example.com/api/auth/callback' */
-  callbackUrl: string | URL;
-  clientSecret: string;
+  callbackUrl: string | URL
+  /** @example 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx' */
+  clientSecret: string
 }
 
 export function Steam(
@@ -31,9 +26,14 @@ export function Steam(
   const realm = callbackUrl.origin
   const returnTo = `${callbackUrl.href}/${PROVIDER_ID}`
 
+  if (!options.clientSecret || options.clientSecret.length < 1) {
+    throw new Error(
+      'You have forgot to set your Steam API Key in the `clientSecret` option. Please visit https://steamcommunity.com/dev/apikey to get one.'
+    )
+  }
+
   return {
-    // @ts-expect-error
-    options,
+    options: options as OAuthUserConfig<SteamProfile>,
     id: PROVIDER_ID,
     name: PROVIDER_NAME,
     type: 'oauth',
@@ -55,8 +55,7 @@ export function Steam(
         'openid.mode': 'checkid_setup',
         'openid.ns': 'http://specs.openid.net/auth/2.0',
         'openid.identity': 'http://specs.openid.net/auth/2.0/identifier_select',
-        'openid.claimed_id':
-          'http://specs.openid.net/auth/2.0/identifier_select',
+        'openid.claimed_id': 'http://specs.openid.net/auth/2.0/identifier_select',
         'openid.return_to': returnTo,
         'openid.realm': realm
       }
@@ -90,10 +89,12 @@ export function Steam(
     },
     userinfo: {
       async request(ctx) {
-        const response = await fetch(
-          `https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${ctx.provider.clientSecret}&steamids=${ctx.tokens.steamId}`
-        )
+        const url = new URL('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002')
 
+        url.searchParams.set('key', ctx.provider.clientSecret as string)
+        url.searchParams.set('steamids', ctx.tokens.steamId as string)
+
+        const response = await fetch(url)
         const data = await response.json()
 
         return data.response.players[0]
