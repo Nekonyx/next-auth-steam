@@ -38,9 +38,9 @@ export function Steam(
     name: PROVIDER_NAME,
     type: 'oauth',
     style: {
-      logo: 'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/12444ac8e7c44f8a69fa007b056f892240cb1a27/logo/steam.svg',
+      logo: 'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam.svg',
       logoDark:
-        'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/12444ac8e7c44f8a69fa007b056f892240cb1a27/logo/steam-dark.svg',
+        'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam-dark.svg',
       bg: '#fff',
       text: '#000',
       bgDark: '#000',
