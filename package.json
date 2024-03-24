@@ -18,18 +18,18 @@
   },
   "peerDependencies": {
     "next": "^13.3.4 || ^14",
-    "next-auth": "^4.22.1",
-    "openid-client": "^5.4.2"
+    "next-auth": "^4",
+    "openid-client": "^5"
   },
   "dependencies": {
     "openid": "^2.0.12"
   },
   "devDependencies": {
     "@types/node": "^18.19.26",
-    "@types/openid": "^2.0.5",
-    "next": "^14.1.4",
-    "next-auth": "^4.24.7",
-    "openid-client": "^5.6.5",
+    "@types/openid": "^2",
+    "next": "^14",
+    "next-auth": "^4",
+    "openid-client": "^5",
     "typescript": "^5.4.3"
   }
 }
