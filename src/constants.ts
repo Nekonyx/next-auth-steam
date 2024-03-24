@@ -17,10 +17,7 @@ export enum PersonaState {
   LookingToPlay = 6
 }
 
-export const LOGO_URL_LIGHT =
-  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam.svg'
-
-export const LOGO_URL_DARK =
-  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam-dark.svg'
+export const LOGO_URL =
+  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/bc574bb62be70993c29f6f54c350bdf64205962a/logo/steam-icon-light.svg'
 
 export const AUTHORIZATION_URL = 'https://steamcommunity.com/openid/login'

@@ -5,8 +5,7 @@ import { TokenSet } from 'openid-client'
 import {
   AUTHORIZATION_URL,
   EMAIL_DOMAIN,
-  LOGO_URL_DARK,
-  LOGO_URL_LIGHT,
+  LOGO_URL,
   PROVIDER_ID,
   PROVIDER_NAME
 } from './constants'
@@ -46,10 +45,10 @@ export function Steam(
     name: PROVIDER_NAME,
     type: 'oauth',
     style: {
-      logo: LOGO_URL_LIGHT,
-      logoDark: LOGO_URL_DARK,
-      bg: '#fff',
-      text: '#000',
+      logo: LOGO_URL,
+      logoDark: LOGO_URL,
+      bg: '#000',
+      text: '#fff',
       bgDark: '#000',
       textDark: '#fff'
     },
