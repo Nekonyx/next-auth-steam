@@ -7,7 +7,6 @@ async function handler(
   req: NextRequest,
   ctx: { params: { nextauth: string[] } }
 ) {
-  // @ts-expect-error
   return NextAuth(req, ctx, {
     providers: [
       SteamProvider(req, {
@@ -19,6 +18,6 @@ async function handler(
 }
 
 export {
-	handler as GET,
-	handler as POST
+  handler as GET,
+  handler as POST
 }
