@@ -11,7 +11,9 @@ import {
   PROVIDER_NAME
 } from './constants'
 
+import type { NextApiRequest } from 'next'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
+import type { NextRequest } from 'next/server'
 import type { SteamProfile } from './types'
 
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
@@ -21,7 +23,10 @@ export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfi
   clientSecret: string
 }
 
-export function Steam(req: Request, options: SteamProviderOptions): OAuthConfig<SteamProfile> {
+export function Steam(
+  req: Request | NextRequest | NextApiRequest,
+  options: SteamProviderOptions
+): OAuthConfig<SteamProfile> {
   const callbackUrl = new URL(options.callbackUrl)
 
   // https://example.com
@@ -64,6 +69,10 @@ export function Steam(req: Request, options: SteamProviderOptions): OAuthConfig<
     },
     token: {
       async request() {
+        if (!req.url) {
+          throw new Error('No URL found in request object')
+        }
+
         const identifier = await verifyAssertion(req, realm, returnTo)
 
         if (!identifier) {
@@ -108,7 +117,7 @@ export function Steam(req: Request, options: SteamProviderOptions): OAuthConfig<
  * Verifies an assertion and returns the claimed identifier if authenticated, otherwise null.
  */
 async function verifyAssertion(
-  req: Request,
+  req: Request | NextRequest | NextApiRequest,
   realm: string,
   returnTo: string
 ): Promise<string | null> {
@@ -123,7 +132,7 @@ async function verifyAssertion(
 
   // We need to create a new URL object to parse the query string
   // req.url in next@14 is an absolute url, but not in next@13, so example.com used as a base url
-  const url = new URL(req.url, 'https://example.com')
+  const url = new URL(req.url!, 'https://example.com')
   const query = Object.fromEntries(url.searchParams.entries())
 
   if (query['openid.op_endpoint'] !== AUTHORIZATION_URL || query['openid.ns'] !== OPENID_CHECK.ns) {
