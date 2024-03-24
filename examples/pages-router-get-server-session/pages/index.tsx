@@ -11,7 +11,7 @@ export interface IProps {
   userSession: Session | null
 }
 
-export default function IndexPage({ userSession }: IProps) {
+export default function Page({ userSession }: IProps) {
   useEffect(() => {
     if (!userSession?.user) {
       signIn()

@@ -1,6 +1,6 @@
 import { useSession } from 'next-auth/react'
 
-export default function IndexPage() {
+export default function Page() {
   const session = useSession({
     required: true
   })

@@ -1,23 +1,19 @@
 import { getServerSession } from 'next-auth'
-import { Fragment } from 'react'
-
-import { SignIn, SignOut } from './Sign'
+import { getAuthOptions } from './auth'
 
 export default async function IndexPage() {
-  const session = await getServerSession()
+  const session = await getServerSession(getAuthOptions())
 
   return (
     <div>
-      {session ? (
-        <Fragment>
-          <p>Hi, you're here!</p>
-          <SignOut />
-        </Fragment>
-      ) : (
-        <Fragment>
-          Do you want to play with me? <SignIn />
-        </Fragment>
-      )}
+      <p>This is SSR page with getServerSession()</p>
+      <ul>
+        <li>Session status: {session ? 'authenticated' : 'unauthenticated'}</li>
+        <li>
+          Session data:
+          <pre>{JSON.stringify(session?.user ?? null, null, 2)}</pre>
+        </li>
+      </ul>
     </div>
   )
 }
