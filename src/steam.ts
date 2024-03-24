@@ -2,11 +2,17 @@ import { randomUUID } from 'crypto'
 import { RelyingParty } from 'openid'
 import { TokenSet } from 'openid-client'
 
-import { EMAIL_DOMAIN, PROVIDER_ID, PROVIDER_NAME, SteamProfile } from './constants'
+import {
+  AUTHORIZATION_URL,
+  EMAIL_DOMAIN,
+  LOGO_URL_DARK,
+  LOGO_URL_LIGHT,
+  PROVIDER_ID,
+  PROVIDER_NAME
+} from './constants'
 
-import type { NextApiRequest } from 'next'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
-import type { NextRequest } from 'next/server'
+import type { SteamProfile } from './types'
 
 export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfile>> {
   /** @example 'https://example.com/api/auth/callback' */
@@ -15,10 +21,7 @@ export interface SteamProviderOptions extends Partial<OAuthUserConfig<SteamProfi
   clientSecret: string
 }
 
-export function Steam(
-  req: NextApiRequest | NextRequest,
-  options: SteamProviderOptions
-): OAuthConfig<SteamProfile> {
+export function Steam(req: Request, options: SteamProviderOptions): OAuthConfig<SteamProfile> {
   const callbackUrl = new URL(options.callbackUrl)
 
   // https://example.com
@@ -38,9 +41,8 @@ export function Steam(
     name: PROVIDER_NAME,
     type: 'oauth',
     style: {
-      logo: 'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam.svg',
-      logoDark:
-        'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam-dark.svg',
+      logo: LOGO_URL_LIGHT,
+      logoDark: LOGO_URL_DARK,
       bg: '#fff',
       text: '#000',
       bgDark: '#000',
@@ -50,7 +52,7 @@ export function Steam(
     checks: ['none'],
     clientId: PROVIDER_ID,
     authorization: {
-      url: 'https://steamcommunity.com/openid/login',
+      url: AUTHORIZATION_URL,
       params: {
         'openid.mode': 'checkid_setup',
         'openid.ns': 'http://specs.openid.net/auth/2.0',
@@ -62,19 +64,9 @@ export function Steam(
     },
     token: {
       async request() {
-        // May throw an error, dunno should I handle it or no
-        // prettier-ignore
-        const claimedIdentifier = await verifyAssertion(req.url!, realm, returnTo)
+        const identifier = await verifyAssertion(req, realm, returnTo)
 
-        if (!claimedIdentifier) {
-          throw new Error('Unauthenticated')
-        }
-
-        const matches = claimedIdentifier.match(
-          /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/
-        )
-
-        if (!matches) {
+        if (!identifier) {
           throw new Error('Unauthenticated')
         }
 
@@ -82,7 +74,7 @@ export function Steam(
           tokens: new TokenSet({
             id_token: randomUUID(),
             access_token: randomUUID(),
-            steamId: matches[1]
+            steamId: identifier
           })
         }
       }
@@ -116,28 +108,60 @@ export function Steam(
  * Verifies an assertion and returns the claimed identifier if authenticated, otherwise null.
  */
 async function verifyAssertion(
-  url: string,
+  req: Request,
   realm: string,
   returnTo: string
 ): Promise<string | null> {
-  const party = new RelyingParty(returnTo, realm, true, false, [])
+  // Here and from here on out, much of the validation will be related to this PR: https://github.com/liamcurry/passport-steam/pull/120.
+  // And accordingly copy the logic from this library: https://github.com/liamcurry/passport-steam/blob/dcebba52d02ce2a12c7d27481490c4ee0bd1ae38/lib/passport-steam/strategy.js#L93
+  const IDENTIFIER_PATTERN = /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/
+  const OPENID_CHECK = {
+    ns: 'http://specs.openid.net/auth/2.0',
+    claimed_id: 'https://steamcommunity.com/openid/id/',
+    identity: 'https://steamcommunity.com/openid/id/'
+  }
 
-  const result: {
-    authenticated: boolean
-    claimedIdentifier?: string | undefined
-  } = await new Promise((resolve, reject) => {
-    party.verifyAssertion(url, (error, result) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(result!)
-      }
-    })
-  })
+  // We need to create a new URL object to parse the query string
+  // req.url in next@14 is an absolute url, but not in next@13, so example.com used as a base url
+  const url = new URL(req.url, 'https://example.com')
+  const query = Object.fromEntries(url.searchParams.entries())
 
-  if (!result.authenticated) {
+  if (query['openid.op_endpoint'] !== AUTHORIZATION_URL || query['openid.ns'] !== OPENID_CHECK.ns) {
     return null
   }
 
-  return result.claimedIdentifier!
+  if (!query['openid.claimed_id']?.startsWith(OPENID_CHECK.claimed_id)) {
+    return null
+  }
+
+  if (!query['openid.identity']?.startsWith(OPENID_CHECK.identity)) {
+    return null
+  }
+
+  const relyingParty = new RelyingParty(returnTo, realm, true, false, [])
+
+  const assertion: {
+    authenticated: boolean
+    claimedIdentifier?: string | undefined
+  } = await new Promise((resolve, reject) => {
+    relyingParty.verifyAssertion(req, (error, result) => {
+      if (error) {
+        reject(error)
+      }
+
+      resolve(result!)
+    })
+  })
+
+  if (!assertion.authenticated || !assertion.claimedIdentifier) {
+    return null
+  }
+
+  const match = assertion.claimedIdentifier.match(IDENTIFIER_PATTERN)
+
+  if (!match) {
+    return null
+  }
+
+  return match[1]
 }

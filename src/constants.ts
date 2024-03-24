@@ -17,20 +17,10 @@ export enum PersonaState {
   LookingToPlay = 6
 }
 
-export interface SteamProfile extends Record<string, any> {
-  steamid: string
-  communityvisibilitystate: CommunityVisibilityState
-  profilestate: number
-  personaname: string
-  profileurl: string
-  avatar: string
-  avatarmedium: string
-  avatarfull: string
-  avatarhash: string
-  lastlogoff: number
-  personastate: PersonaState
-  primaryclanid: string
-  timecreated: number
-  personastateflags: number
-  commentpermission: boolean
-}
+export const LOGO_URL_LIGHT =
+  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam.svg'
+
+export const LOGO_URL_DARK =
+  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/8e66ce4ca6b1a424368fa6d7f14cbc0d24942d35/logo/steam-dark.svg'
+
+export const AUTHORIZATION_URL = 'https://steamcommunity.com/openid/login'
