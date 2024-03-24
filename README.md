@@ -8,11 +8,15 @@ steam authentication provider for [next-auth](https://npm.im/next-auth).
 
 ```ts
 // app/api/auth/[...nextauth]/route.ts
+import NextAuth from 'next-auth'
+import SteamProvider from 'next-auth-steam'
+
+import type { NextRequest } from 'next/server'
+
 async function handler(
   req: NextRequest,
   ctx: { params: { nextauth: string[] } }
 ) {
-  // @ts-ignore
   return NextAuth(req, ctx, {
     providers: [
       SteamProvider(req, {
@@ -33,10 +37,10 @@ export {
 
 ```ts
 // pages/api/auth/[...nextauth].ts
-import { NextApiRequest, NextApiResponse } from 'next'
-
 import NextAuth from 'next-auth'
 import SteamProvider from 'next-auth-steam'
+
+import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return NextAuth(req, res, {
@@ -55,9 +59,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 Use next-auth's [callbacks](https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks) to retrieve Steam profile data:
 
 ```ts
-// (pages/app)/api/auth/[...nextauth].ts
 import { PROVIDER_ID } from 'next-auth-steam'
 
+// Inside `handler` function
 return NextAuth(req, res, {
   providers: [
     SteamProvider(req, {
