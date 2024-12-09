@@ -7,7 +7,7 @@ export const STEAM_EMAIL_PSEUDO_DOMAIN = 'steamcommunity.com'
 export const STEAM_AUTHORIZATION_URL = 'https://steamcommunity.com/openid/login'
 
 export const STEAM_LOGO_URL =
-  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/bc574bb62be70993c29f6f54c350bdf64205962a/logo/steam-icon-light.svg'
+  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/fcc97d9d5ae40b0b9c3e98efb6eda1058d571716/logo/steam-icon.svg'
 
 /** @deprecated Use `STEAM_PROVIDER_ID` instead */
 export const PROVIDER_ID = STEAM_PROVIDER_ID
