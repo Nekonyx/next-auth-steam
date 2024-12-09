@@ -27,10 +27,11 @@ NEXTAUTH_SECRET=
 // app/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth'
 import Steam from 'next-auth-steam'
+import type { NextRequest } from 'next/server'
 
 // Learn more: https://next-auth.js.org/configuration/initialization#route-handlers-app
 async function auth(
-  req: Request,
+  req: NextRequest,
   ctx: {
     params: {
       nextauth: string[]
