@@ -58,7 +58,7 @@ export function Steam<P extends SteamProfile>(
   // realm: https://example.com
   // returnTo: https://example.com/api/auth/callback/steam
   const realm = callbackUrl.origin
-  const returnTo = `${callbackUrl.href}${STEAM_PROVIDER_ID}`
+  const returnTo = `${callbackUrl.href}/${STEAM_PROVIDER_ID}`
 
   if (!options.clientSecret || options.clientSecret.length < 1) {
     throw new Error(
