@@ -2,8 +2,9 @@
 
 Steam authentication provider for [NextAuth.js](https://authjs.dev).
 
-> [!IMPORTANT]
-> This branch (`master`) contains the module for NextAuth.js v4. [Click here](https://github.com/nekonyx/next-auth-steam/tree/beta) to switch to the `beta` branch with support for NextAuth.js v5.
+<!-- Support for NextAuth.js 5 isn't implemented at this time -->
+<!-- > [!IMPORTANT] -->
+<!-- > This branch (`master`) contains the module for NextAuth.js v4. [Click here](https://github.com/nekonyx/next-auth-steam/tree/beta) to switch to the `beta` branch with support for NextAuth.js v5. -->
 
 ### Install
 
