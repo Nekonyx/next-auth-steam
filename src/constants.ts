@@ -1,6 +1,28 @@
-export const PROVIDER_ID = 'steam'
-export const PROVIDER_NAME = 'Steam'
-export const EMAIL_DOMAIN = 'steamcommunity.com'
+export const STEAM_PROVIDER_ID = 'steam'
+
+export const STEAM_PROVIDER_NAME = 'Steam'
+
+export const STEAM_EMAIL_PSEUDO_DOMAIN = 'steamcommunity.com'
+
+export const STEAM_AUTHORIZATION_URL = 'https://steamcommunity.com/openid/login'
+
+export const STEAM_LOGO_URL =
+  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/bc574bb62be70993c29f6f54c350bdf64205962a/logo/steam-icon-light.svg'
+
+/** @deprecated Use `STEAM_PROVIDER_ID` instead */
+export const PROVIDER_ID = STEAM_PROVIDER_ID
+
+/** @deprecated Use `STEAM_PROVIDER_NAME` instead */
+export const PROVIDER_NAME = STEAM_PROVIDER_NAME
+
+/** @deprecated Use `STEAM_EMAIL_PSEUDO_DOMAIN` instead */
+export const EMAIL_DOMAIN = STEAM_EMAIL_PSEUDO_DOMAIN
+
+/** @deprecated Use `STEAM_AUTHORIZATION_URL` instead */
+export const AUTHORIZATION_URL = 'https://steamcommunity.com/openid/login'
+
+/** @deprecated Use `STEAM_LOGO_URL` instead */
+export const LOGO_URL = STEAM_LOGO_URL
 
 export enum CommunityVisibilityState {
   Private = 1,
@@ -16,8 +38,3 @@ export enum PersonaState {
   LookingToTrade = 5,
   LookingToPlay = 6
 }
-
-export const LOGO_URL =
-  'https://raw.githubusercontent.com/Nekonyx/next-auth-steam/bc574bb62be70993c29f6f54c350bdf64205962a/logo/steam-icon-light.svg'
-
-export const AUTHORIZATION_URL = 'https://steamcommunity.com/openid/login'

@@ -1,0 +1,28 @@
+{
+  // Use the workspace version of TypeScript
+  "typescript.tsdk": "node_modules/typescript/lib",
+  // Disable ESLint and built-in formatting
+  "eslint.enable": false,
+  "javascript.format.enable": false,
+  "typescript.format.enable": false,
+  // Enable biome and auto-fixing on save
+  "biome.enabled": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "never",
+      "source.fixAll.biome": "explicit",
+      "source.organizeImports": "never",
+      "source.organizeImports.biome": "explicit"
+    }
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome",
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "never",
+      "source.fixAll.biome": "explicit",
+      "source.organizeImports": "never",
+      "source.organizeImports.biome": "explicit"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 {
   "name": "next-auth-steam",
-  "license": "WTFPL",
-  "version": "0.3.0",
-  "description": "Steam authentication provider for next-auth",
+  "license": "Unlicense",
+  "version": "0.4.0",
+  "description": "Steam authentication provider for NextAuth.js",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": {
@@ -14,22 +14,26 @@
   ],
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
-  },
-  "peerDependencies": {
-    "next": "^13.3.4 || ^14",
-    "next-auth": "^4",
-    "openid-client": "^5"
+    "watch": "tsc -w",
+    "lint": "biome lint src",
+    "format": "biome format --write src",
+    "format:examples": "biome format --write examples"
   },
   "dependencies": {
     "openid": "^2.0.12"
   },
+  "peerDependencies": {
+    "next": "^13.3.4 || ^14 || ^15",
+    "next-auth": "^4",
+    "openid-client": "^5"
+  },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "@types/node": "^18.19.26",
     "@types/openid": "^2",
-    "next": "^14",
+    "next": "^15",
     "next-auth": "^4",
     "openid-client": "^5",
-    "typescript": "^5.4.3"
+    "typescript": "^5.7.2"
   }
 }

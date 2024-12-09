@@ -1,101 +1,77 @@
 # next-auth-steam
 
-steam authentication provider for [next-auth](https://npm.im/next-auth).
+Steam authentication provider for [NextAuth.js](https://authjs.dev).
 
-## Usage
+> [!IMPORTANT]
+> This branch (`master`) contains the module for NextAuth.js v4. [Click here](https://github.com/nekonyx/next-auth-steam/tree/beta) to switch to the `beta` branch with support for NextAuth.js v5.
 
-### Using App Router
+### Install
+
+```
+npm install next-auth-steam
+```
+
+### Quickstart
+
+1. Create a `.env` file. For configuration details, see: [NextAuth Configuration Options](https://next-auth.js.org/configuration/options).
+
+```dotenv
+# .env
+NEXTAUTH_URL=
+NEXTAUTH_SECRET=
+```
+
+#### Using App Router
 
 ```ts
-// app/api/auth/[...nextauth]/route.ts
+// app/auth/[...nextauth]/route.ts
 import NextAuth from 'next-auth'
-import SteamProvider from 'next-auth-steam'
+import Steam from 'next-auth-steam'
 
-import type { NextRequest } from 'next/server'
-
-async function handler(
-  req: NextRequest,
-  ctx: { params: { nextauth: string[] } }
+// Learn more: https://next-auth.js.org/configuration/initialization#route-handlers-app
+async function auth(
+  req: Request,
+  ctx: {
+    params: {
+      nextauth: string[]
+    }
+  }
 ) {
   return NextAuth(req, ctx, {
     providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      Steam(req, {
+        clientSecret: process.env.STEAM_SECRET!
       })
     ]
   })
 }
 
-export {
-  handler as GET,
-  handler as POST
-}
+export { auth as GET, auth as POST }
 ```
 
-### Using Pages Router
+#### Using Pages Router
 
 ```ts
 // pages/api/auth/[...nextauth].ts
 import NextAuth from 'next-auth'
-import SteamProvider from 'next-auth-steam'
-
+import Steam from 'next-auth-steam'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return NextAuth(req, res, {
+// Learn more: https://next-auth.js.org/configuration/initialization#advanced-initialization
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  return await NextAuth(req, res, {
     providers: [
-      SteamProvider(req, {
-        clientSecret: process.env.STEAM_SECRET!,
-        callbackUrl: 'http://localhost:3000/api/auth/callback'
+      Steam(req, {
+        clientSecret: process.env.STEAM_SECRET!
       })
     ]
   })
 }
 ```
 
-### Retrieving Steam profile data
+### Examples
 
-Use next-auth's [callbacks](https://next-auth.js.org/getting-started/example#using-nextauthjs-callbacks) to retrieve Steam profile data:
+> [!NOTE]
+> Pages Router example uses Next.js 13. App Router example uses the latest version (Next.js 15).
 
-```ts
-import { PROVIDER_ID } from 'next-auth-steam'
-
-// Inside `handler` function
-return NextAuth(req, res, {
-  providers: [
-    SteamProvider(req, {
-      clientSecret: process.env.STEAM_SECRET!,
-      callbackUrl: 'http://localhost:3000/api/auth/callback'
-    })
-  ],
-  callbacks: {
-    jwt({ token, account, profile }) {
-      if (account?.provider === PROVIDER_ID) {
-        token.steam = profile
-      }
-
-      return token
-    },
-    session({ session, token }) {
-      if ('steam' in token) {
-        // @ts-expect-error
-        session.user.steam = token.steam
-      }
-
-      return session
-    }
-  }
-})
-
-// Somewhere in your components
-import { useSession, signIn, signOut } from "next-auth/react"
-
-export default function Component() {
-  const { data } = useSession()
-
-  return <div>Hello, {data?.user.steam.personaname}</div>
-}
-```
-
-More examples are in [examples](examples) folder.
+All examples are located in the [`examples`](https://github.com/nekonyx/next-auth-steam/tree/master/examples) folder. Feel free to open a PR if you'd like to add another example!
