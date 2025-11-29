@@ -23,17 +23,15 @@
     "openid": "^2.0.12"
   },
   "peerDependencies": {
-    "next": "^13.3.4 || ^14 || ^15",
-    "next-auth": "^4",
-    "openid-client": "^5"
+    "next": ">=13.3.4",
+    "next-auth": "^4"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/node": "^18.19.26",
     "@types/openid": "^2",
-    "next": "^15",
+    "next": "15.4.7",
     "next-auth": "^4",
-    "openid-client": "^5",
     "typescript": "^5.7.2"
   }
 }

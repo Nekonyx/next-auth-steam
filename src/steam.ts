@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import type { NextApiRequest } from 'next'
 import type { OAuthConfig, OAuthUserConfig } from 'next-auth/providers'
 import type { NextRequest } from 'next/server'
-import { TokenSet } from 'openid-client'
+
 import {
   type CommunityVisibilityState,
   type PersonaState,
@@ -102,11 +102,11 @@ export function Steam<P extends SteamProfile>(
         const identity = await claimIdentity(request, realm, returnTo)
 
         return {
-          tokens: new TokenSet({
+          tokens: {
             id_token: randomUUID(),
             access_token: randomUUID(),
             steamId: identity
-          })
+          }
         }
       }
     },
